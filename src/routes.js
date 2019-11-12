@@ -31,8 +31,6 @@ const routes = {
   '/new-request/:id': 'newRequestLink',
   '/new-request-finish/:id': 'newRequestLink',
   '/update-registration/:id': 'updateRegistration',
-  '/association': 'associationLink',
-  '/de-association': 'deAssociationLink',
   '/de-registration/:id': 'deRegistrationLink',
   '/de-registration-finish/:id': 'deRegistrationLink',
   '/update-deregistration/:id': 'updateDeregistration',
