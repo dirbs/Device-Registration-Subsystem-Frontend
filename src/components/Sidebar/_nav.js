@@ -23,25 +23,13 @@ export default {
         icon: 'fa fa-barcode',
     },
     {
-        id: 4,
-        name: 'associationLink',
-        url: '/association',
-        icon: 'fa fa-plus-square-o',
-    },
-    {
         id: 5,
-        name: 'deAssociationLink',
-        url: '/de-association',
-        icon: 'fa fa-chain-broken',
-    },
-    {
-        id: 6,
         name: 'deRegistrationLink',
         url: '/de-registration/id',
         icon: 'fa fa-ban',
     },
     {
-        id: 7,
+        id: 4,
         name: 'searchRequestLink',
         url: '/search-requests',
         icon: 'fa fa-search',
