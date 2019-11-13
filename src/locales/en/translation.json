@@ -176,6 +176,8 @@
   "requestSteps.de-registration.noRecord": "No record found",
 
   "report": "Report",
+  "areYouSure": "Are you sure?",
+  "thisIMEIwillbeDeAssociate!": "This IMEI will be De-Associate!",
   "clickToDownload": "Click here to view this document",
   "previousStep": "Previous steps details",
   "close": "Close",

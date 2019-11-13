@@ -43,6 +43,8 @@ import NewDeregistrationRequest from '../../views/Requests/DeRegistration/NewReq
 import UpdateDeRegistration from '../../views/Requests/DeRegistration/Update/Update';
 import ViewReview from "../../views/Requests/Review/View/ViewReview";
 import ViewRequest from "../../views/Requests/View/ViewRequest";
+import Deassociation from "../../views/Association/Deassociation";
+import Association from "../../views/Association/Association";
 
 import Page401 from '../../views/Errors/Page401';
 import { I18n, translate } from 'react-i18next';
