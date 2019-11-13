@@ -102,7 +102,7 @@ class Deassociation extends Component {
   confirmMessage = (values, config) => {
     MySwal.fire({
       title: i18n.t('areYouSure'),
-      text: i18n.t('thisIMEIwillbeDeAssociate'),
+      text: i18n.t('thisIMEIwillbeDeAssociate!'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',

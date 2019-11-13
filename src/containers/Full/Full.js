@@ -151,11 +151,13 @@ class Full extends Component {
                         <Route path="/update-deregistration/:id" name="UpdateDeRegistration" key={Date.now()}
                                render={(props) => <UpdateDeRegistration {...this.props} {...props}/>}/>
                         }
-                        {(getUserRole(this.props.resources) === INDIVIDUAL_IMPORTER) &&
+                        {(getUserRole(this.props.resources) === INDIVIDUAL_IMPORTER ||
+                          getUserRole(this.props.resources) === EXPORTER) &&
                         <Route path="/association" name="Association" key={Date.now()}
                                render={(props) => <Association {...this.props} {...props}/>}/>
                         }
-                        {(getUserRole(this.props.resources) === INDIVIDUAL_IMPORTER) &&
+                        {(getUserRole(this.props.resources) === INDIVIDUAL_IMPORTER ||
+                          getUserRole(this.props.resources) === EXPORTER) &&
                         <Route path="/de-association" name="Deassociation" key={Date.now()}
                                render={(props) => <Deassociation {...this.props} {...props}/>}/>
                         }

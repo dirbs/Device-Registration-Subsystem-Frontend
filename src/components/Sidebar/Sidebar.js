@@ -126,7 +126,7 @@ class Sidebar extends Component {
           break;
 
           default:
-            if(url === '/new-request/id' || url === '/de-registration/id') {
+            if(url === '/new-request/id' || url === '/de-registration/id' || url === '/association' ||  url === '/de-association') {
                 // Ignore these routes for above group
             } else {
               links = <NavLink to={url} className={classes.link} activeClassName="active" onClick={this.hideMobile}>
