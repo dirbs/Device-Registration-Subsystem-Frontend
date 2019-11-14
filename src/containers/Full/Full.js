@@ -43,6 +43,8 @@ import NewDeregistrationRequest from '../../views/Requests/DeRegistration/NewReq
 import UpdateDeRegistration from '../../views/Requests/DeRegistration/Update/Update';
 import ViewReview from "../../views/Requests/Review/View/ViewReview";
 import ViewRequest from "../../views/Requests/View/ViewRequest";
+import Deassociation from "../../views/Association/Deassociation";
+import Association from "../../views/Association/Association";
 
 import Page401 from '../../views/Errors/Page401';
 import { I18n, translate } from 'react-i18next';
@@ -148,6 +150,16 @@ class Full extends Component {
                         {(getUserRole(this.props.resources) === EXPORTER) &&
                         <Route path="/update-deregistration/:id" name="UpdateDeRegistration" key={Date.now()}
                                render={(props) => <UpdateDeRegistration {...this.props} {...props}/>}/>
+                        }
+                        {(getUserRole(this.props.resources) === INDIVIDUAL_IMPORTER ||
+                          getUserRole(this.props.resources) === EXPORTER) &&
+                        <Route path="/association" name="Association" key={Date.now()}
+                               render={(props) => <Association {...this.props} {...props}/>}/>
+                        }
+                        {(getUserRole(this.props.resources) === INDIVIDUAL_IMPORTER ||
+                          getUserRole(this.props.resources) === EXPORTER) &&
+                        <Route path="/de-association" name="Deassociation" key={Date.now()}
+                               render={(props) => <Deassociation {...this.props} {...props}/>}/>
                         }
                         <Route path="/unauthorized-access" name="Page401" component={Page401}/>
                         <Redirect from="/" to="/dashboard"/>
