@@ -23,42 +23,57 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import i18n from '../../i18n';
-import {withFormik, Field} from 'formik';
+import { withFormik, Field } from 'formik';
 import {
   Col,
   Button,
   Form,
+  Card,
+  CardBody,
+  CardHeader,
+  Row
 } from 'reactstrap';
 import renderInput from '../../components/Form/RenderInput';
- import {
+import {
   instance,
   errors,
   getUserInfo,
   getAuthHeader,
- SweetAlert
+  SweetAlert
 } from "../../utilities/helpers";
 
 class Association extends Component {
 
-    render(){
-      const {
-        isSubmitting,
-        handleSubmit
-      } = this.props;
-        return(
-          <Form onSubmit={handleSubmit}>
-          <Col sm={12} md={6} xl={6}>
-          <Field name="device_imei" component={renderInput} label={i18n.t('IMEI')}
-           type="text" placeholder={i18n.t('typeImei')} requiredStar min={0} max={16}/>
-         <Button color="primary" type="submit" disabled={isSubmitting}>
-         {i18n.t('associate') + ' ' + i18n.t('IMEI')}
-        </Button>
+  render() {
+    const {
+      isSubmitting,
+      handleSubmit
+    } = this.props;
+    return (
+      <div className="mt-5">
+        <Row>
+        <Col sm={{ size: 12 }} md={{ size: 8, offset: 2 }} >
+          <div style={{backgroundColor: '#F9F9F9', padding: '30px'}}>
+        <Card className="mb-0">
+        <CardHeader><b>{i18n.t('associate') + ' ' + i18n.t('IMEI')}</b></CardHeader>
+          <CardBody>
+            <Form onSubmit={handleSubmit}>
+                <Field name="device_imei" component={renderInput} label={i18n.t('IMEI')}
+                  type="text" placeholder={i18n.t('typeImei')} requiredStar min={0} max={16} />
+                <Button color="primary" type="submit" className="float-right mb-4" disabled={isSubmitting}>
+                  {i18n.t('associate')}
+                </Button>
+            </Form>
+          </CardBody>
+        </Card>
+        </div>
         </Col>
-          </Form>
-        );
-    }
+        </Row>
+      </div>
+    );
+  }
 }
 
 //export default Association;
@@ -92,41 +107,40 @@ function callServer(values, config) {
   params.uid = getUserInfo().sub.substring(27);
   params.imei = values.device_imei;
   instance.post('/associate', params, config)
-  .then(response => {
-    if(response.data.message)
-    {
-      SweetAlert({
-        title: 'Associated!',
-        message: response.data.message,
-        type:'success'
-      })
-    }
-  })
-  .catch(error => {
-    errors(this, error);
-  })
+    .then(response => {
+      if (response.data.message) {
+        SweetAlert({
+          title: 'Associated!',
+          message: response.data.message,
+          type: 'success'
+        })
+      }
+    })
+    .catch(error => {
+      errors(this, error);
+    })
 }
 
 EnhancedAssociation.defaultProps = {
   updateTokenHOCProp: (callingFunc, values = null, props) => {
     let config = null;
-    if(props.kc.isTokenExpired(0)) {
-        props.kc.updateToken(0)
-            .success(() => {
-                localStorage.setItem('token', props.kc.token)
-                config = {
-                  headers: getAuthHeader(props.kc.token)
-                }
-                callingFunc(values, config);
-            })
-            .error(() => props.kc.logout());
+    if (props.kc.isTokenExpired(0)) {
+      props.kc.updateToken(0)
+        .success(() => {
+          localStorage.setItem('token', props.kc.token)
+          config = {
+            headers: getAuthHeader(props.kc.token)
+          }
+          callingFunc(values, config);
+        })
+        .error(() => props.kc.logout());
     } else {
-        config = {
-          headers: getAuthHeader()
-        }
-        callingFunc(values, config);
+      config = {
+        headers: getAuthHeader()
+      }
+      callingFunc(values, config);
     }
-}
+  }
 }
 
 export default EnhancedAssociation;
