@@ -76,7 +76,7 @@ class Deassociation extends Component {
 }
 
   callServerAssociationList = (values, config) => {
-    instance.get(`/associate/${getUserInfo().sub.substring(20).replace('-', '')}` , config)
+    instance.get(`/associate/${getUserInfo().nic.replace('-', '')}` , config)
     .then(response => {
       if(response.data.message)
       {
@@ -94,7 +94,7 @@ class Deassociation extends Component {
   deAssociateIMEI = (imei) => {
     const params = {
       imei: imei,
-      uid: getUserInfo().sub.substring(20).replace('-', '')
+      uid: getUserInfo().nic.replace('-', '')
     }
     this.updateTokenHOC(this.confirmMessage, params)
   }

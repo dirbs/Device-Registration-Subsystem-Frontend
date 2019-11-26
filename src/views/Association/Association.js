@@ -104,7 +104,7 @@ const EnhancedAssociation = withFormik({
 
 function callServer(values, config) {
   const params = {};
-  params.uid = getUserInfo().sub.substring(20).replace('-', '');
+  params.uid = getUserInfo().nic.replace('-', '');
   params.imei = values.device_imei;
   instance.post('/associate', params, config)
     .then(response => {
