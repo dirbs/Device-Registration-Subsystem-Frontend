@@ -43,6 +43,9 @@ import {
   getAuthHeader,
   SweetAlert
 } from "../../utilities/helpers";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+const MySwal = withReactContent(Swal);
 
 class Association extends Component {
 
@@ -109,11 +112,41 @@ function callServer(values, config) {
   instance.post('/associate', params, config)
     .then(response => {
       if (response.data.message) {
-        SweetAlert({
-          title: 'Associated!',
-          message: response.data.message,
-          type: 'success'
-        })
+        console.log(response.data);
+        if(!response.data.is_associated)
+        {
+          SweetAlert({
+            title: 'Associated!',
+            message: response.data.message,
+            type: 'success'
+          })
+        }
+        else{
+          MySwal.fire({
+            title: i18n.t('areYouSure'),
+            text: response.data.message,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes'
+          }).then((result) => {
+            if (result.value) {
+              params['choice'] = true;
+              instance.post('/associate_duplicate', params, config)
+              .then(response => {
+                SweetAlert({
+                  title: 'Associated!',
+                  message: response.data.message,
+                  type: 'success'
+                })
+              })
+              .catch(error => {
+                errors(this, error);
+              })
+            }
+          })
+        }
       }
     })
     .catch(error => {
