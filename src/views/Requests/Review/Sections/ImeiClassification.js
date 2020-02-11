@@ -201,6 +201,10 @@ class ImeiClassification extends Component {
               </td>
             </tr>
             <tr>
+              <th>{i18n.t('associated') + ' ' + i18n.t('IMEI')}</th>
+              <td>{(!isNil(step3Data.associated_imeis) && step3Data.associated_imeis.toLocaleString()) || 0}</td>
+            </tr>
+            <tr>
               <th>{i18n.t('seenOnNetwork')}</th>
               <td>{(!isNil(step3Data.seen_on_network) && step3Data.seen_on_network.toLocaleString()) || 0}</td>
             </tr>

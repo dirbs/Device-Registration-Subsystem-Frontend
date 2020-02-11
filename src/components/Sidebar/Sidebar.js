@@ -105,7 +105,7 @@ class Sidebar extends Component {
       let links = '';
       switch (getUserRole(props.resources)) {
           case EXPORTER:
-            if(url === '/new-request/id') {
+            if(url === '/new-request/id' || url === '/association' ||  url === '/de-association') {
                 // Ignore this route for above group
             } else {
               links = <NavLink to={url} className={classes.link} activeClassName="active" onClick={this.hideMobile}>
@@ -115,6 +115,15 @@ class Sidebar extends Component {
           break;
 
           case BULK_IMPORTER:
+              if(url === '/de-registration/id' || url === '/association' ||  url === '/de-association') {
+                // Ignore this route for above group
+            } else {
+              links = <NavLink to={url} className={classes.link} activeClassName="active" onClick={this.hideMobile}>
+                        <i className={classes.icon}></i>{props.t(item.name)}{badge(item.badge)}
+                      </NavLink>
+            }
+          break;
+
           case INDIVIDUAL_IMPORTER:
             if(url === '/de-registration/id') {
                 // Ignore this route for above group
@@ -126,7 +135,7 @@ class Sidebar extends Component {
           break;
 
           default:
-            if(url === '/new-request/id' || url === '/de-registration/id') {
+            if(url === '/new-request/id' || url === '/de-registration/id' || url === '/association' ||  url === '/de-association') {
                 // Ignore these routes for above group
             } else {
               links = <NavLink to={url} className={classes.link} activeClassName="active" onClick={this.hideMobile}>
