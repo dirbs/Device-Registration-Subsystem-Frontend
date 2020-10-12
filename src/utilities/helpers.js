@@ -35,7 +35,8 @@ import {
   DE_DOCUMENTS,
   ENGLISH_REGEX,
   SPANISH_REGEX,
-  INDONESIAN_REGEX
+  INDONESIAN_REGEX,
+  IS_AUTOMATE
 } from './constants';
 import FileSaver from "file-saver";
 import {lastIndexOf, take} from 'ramda'
@@ -82,6 +83,15 @@ export function fetchServerConfigData () {
         data.documents.de_registration.map((doc) => (
           DE_DOCUMENTS.push(doc)
         ))
+      }
+      if (data.system_config){
+        data.system_config.map((entry) => {
+          if (entry.label === "automate_imei_request")
+          {
+            console.log(entry.flag)
+            IS_AUTOMATE[0] = entry.flag
+          }
+        })
       }
     })
     .catch(error => {

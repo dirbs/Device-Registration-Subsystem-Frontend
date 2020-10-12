@@ -68,7 +68,8 @@ import {
   TECHNOLOGIES,
   DOCUMENTS,
   EXTENSIONS,
-  REQUEST_STEPS
+  REQUEST_STEPS,
+  IS_AUTOMATE
 } from "../../../../utilities/constants";
 import StepLoading from "../../../../components/Loaders/StepLoading";
 import {isNil, isEmpty, mapObjIndexed,equals,all,keys} from 'ramda';
@@ -1054,6 +1055,7 @@ class NewRegistationRequest extends Component {
 
   render() {
     const {step, stepsInfo, id, prevStepsData, stepReady} = this.state;
+    console.log(IS_AUTOMATE)
     return (
       <I18n ns="translations">
         {

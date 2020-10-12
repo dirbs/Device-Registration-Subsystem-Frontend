@@ -53,7 +53,8 @@ export const TECHNOLOGIES = []
 export const DOCUMENTS = []
 export const DE_DOCUMENTS = []
 export const EXTENSIONS = ['pdf', 'jpg', 'png', 'gif', 'bmp', 'tiff', 'svg'];
-export const STATUS_TYPES = []
+export const STATUS_TYPES = [];
+export const IS_AUTOMATE = [];
 
 export const REVIEW_STEPS = {
  registration: [
