@@ -24,7 +24,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import React, {Component} from 'react';
 import {translate, I18n} from 'react-i18next';
-import {REVIEW_STEPS} from "../../../../utilities/constants";
+import {REVIEW_STEPS, IS_AUTOMATE} from "../../../../utilities/constants";
 import {
   Button
 } from 'reactstrap';
@@ -623,6 +623,11 @@ class ViewReview extends Component {
         })
       }
       else if (steps.currentStep === 4) {
+        if(IS_AUTOMATE[0])
+        {
+          this.props.history.push(`/dashboard`)
+        }
+        else {
         this.setState({
           steps: {
             ...this.state.steps,
@@ -633,6 +638,7 @@ class ViewReview extends Component {
             stepReady: true
           })
         })
+      }
       }
       else if (steps.currentStep === 5) {
         this.props.history.push(`/dashboard`)
@@ -664,6 +670,11 @@ class ViewReview extends Component {
         })
       }
       else if (steps.currentStep === 3) {
+        if(IS_AUTOMATE[0])
+        {
+          this.props.history.push(`/dashboard`)
+        }
+        else {
         this.setState({
           steps: {
             ...this.state.steps,
@@ -674,6 +685,7 @@ class ViewReview extends Component {
             stepReady: true
           })
         })
+      }
       }
       else if (steps.currentStep === 4) {
         this.props.history.push(`/dashboard`)

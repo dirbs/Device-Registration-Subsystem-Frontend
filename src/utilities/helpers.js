@@ -36,7 +36,10 @@ import {
   ENGLISH_REGEX,
   SPANISH_REGEX,
   INDONESIAN_REGEX,
-  IS_AUTOMATE
+  REQUEST_STEPS,
+  IS_AUTOMATE,
+  VIEW_STEPS,
+  REVIEW_STEPS
 } from './constants';
 import FileSaver from "file-saver";
 import {lastIndexOf, take} from 'ramda'
@@ -88,8 +91,15 @@ export function fetchServerConfigData () {
         data.system_config.map((entry) => {
           if (entry.label === "automate_imei_request")
           {
-            console.log(entry.flag)
-            IS_AUTOMATE[0] = entry.flag
+            IS_AUTOMATE[0] = entry.flag;
+            if(entry.flag){
+              REQUEST_STEPS.registration.pop();
+              REQUEST_STEPS.de_registration.pop();
+              VIEW_STEPS.stepInfo.pop();
+              VIEW_STEPS.deRegStepInfo.pop();
+              REVIEW_STEPS.registration.pop();
+              REVIEW_STEPS.de_registration.pop();
+            }
           }
         })
       }

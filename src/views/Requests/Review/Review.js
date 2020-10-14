@@ -38,7 +38,7 @@ import {
   languageCheck
 } from "../../../utilities/helpers";
 import {
-  REVIEW_STEPS
+  REVIEW_STEPS, IS_AUTOMATE
 } from "../../../utilities/constants";
 import {isNil, lensPath, view, set} from 'ramda'
 //Steps forms
@@ -1352,7 +1352,7 @@ class Review extends Component {
           })
         })
       }
-      else if (steps.currentStep === 4) {
+      else if (steps.currentStep === 4 && !IS_AUTOMATE[0]) {
         this.setState({
           currentReviewStatus: view(step5Status, this.state),
           currentReviewFeedback: view(step5Feedback, this.state)
@@ -1388,7 +1388,7 @@ class Review extends Component {
           })
         })
       }
-      else if (steps.currentStep === 4) {
+      else if (steps.currentStep === 4 && !IS_AUTOMATE[0]) {
         this.setState({
           currentReviewStatus: view(step5Status, this.state),
           currentReviewFeedback: view(step5Feedback, this.state)

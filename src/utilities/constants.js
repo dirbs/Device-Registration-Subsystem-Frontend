@@ -81,6 +81,18 @@ export const REQUEST_STEPS = {
   'reviewRegistration.step5'
  ]
 }
+export const VIEW_STEPS = {
+  stepInfo: [
+    'requestSteps.registration.basic',
+    'requestSteps.registration.deviceModel',
+    'requestSteps.registration.approvalDocuments'
+  ],
+  deRegStepInfo: [
+    'requestSteps.de-registration.basic',
+    'requestSteps.de-registration.deviceModel',
+    'requestSteps.de-registration.approvalDocuments'
+  ]
+}
 
 export const Date_Format = 'YYYY-MM-DD';
 export const PAGE_LIMIT = 10;
