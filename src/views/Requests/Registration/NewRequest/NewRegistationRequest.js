@@ -68,7 +68,8 @@ import {
   TECHNOLOGIES,
   DOCUMENTS,
   EXTENSIONS,
-  REQUEST_STEPS
+  REQUEST_STEPS,
+  IS_AUTOMATE
 } from "../../../../utilities/constants";
 import StepLoading from "../../../../components/Loaders/StepLoading";
 import {isNil, isEmpty, mapObjIndexed,equals,all,keys} from 'ramda';
@@ -506,7 +507,7 @@ class NewRegistrationStep2 extends Component {
                 </CardBody>
               </Card>
               <div className="text-right">
-                <Button color="primary" type="submit" disabled={isSubmitting}>{i18n.t('next')}</Button>{' '}
+                <Button color="primary" type="submit" disabled={isSubmitting}>{IS_AUTOMATE[0] ? i18n.t('finish') : i18n.t('next')}</Button>{' '}
               </div>
             </Col>
           </Row>
@@ -1012,8 +1013,26 @@ class NewRegistationRequest extends Component {
         if (response.data.id) {
           this.updateTokenHOC(this.getPrevStepsDataFromServer, id);
           this.setState({stepReady: true});
+          if (IS_AUTOMATE[0])
+          {
+            // Finish the Registration WITHOUT 3RD STEP IF AUTOMATIC REGISTRATION IS TRUE
+            const statusDetails = {
+              id: id,
+              type: 'registration',
+              typeLabel: 'Registration',
+              icon: 'fa fa-check',
+              status: 'Pending Review',
+              action: 'Submitted'
+            }
+            this.props.history.push({
+              pathname: '/request-status',
+              state: {details: statusDetails}
+            });
+          }
+          else {
+          this.setState({step: 3});
+          }
         }
-        this.setState({step: 3});
         this.setState({stepReady: true});
       })
       .catch((error) => {

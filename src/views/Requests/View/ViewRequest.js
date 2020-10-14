@@ -50,7 +50,7 @@ import {
 } from "../../../utilities/helpers";
 import StepLoading from "../../../components/Loaders/StepLoading";
 import {isNil, isEmpty, map} from 'ramda'
-import {BULK_IMPORTER, EXPORTER} from "../../../utilities/constants";
+import {BULK_IMPORTER, EXPORTER, VIEW_STEPS, IS_AUTOMATE} from "../../../utilities/constants";
 import FileSaver from "file-saver";
 
 const Steps = ({
@@ -306,7 +306,7 @@ const Steps = ({
                   }
                   <div className="stepBtn_container">
                     <button color="link" onClick={callPrev} className='btn btn-next-prev'>{t('previous')}</button>
-                    <Button color="primary" onClick={jumpToNext} className='btn-next-prev'>{t('next')}</Button>{' '}
+                    <Button color="primary" onClick={jumpToNext} className='btn-next-prev'>{IS_AUTOMATE[0] ? t('finish') : t('next')}</Button>{' '}
                   </div>
                 </Col>
               </Row>
@@ -373,13 +373,8 @@ class ViewRequest extends Component {
       requestStatus: '',
       stepReady: false,
       hasReport: false,
-      stepsInfo: [
-        `${i18n.t('requestSteps.registration.basic')}`,
-        `${i18n.t('requestSteps.registration.deviceModel')}`,
-        `${i18n.t('requestSteps.registration.approvalDocuments')}`],
-      stepsInfo2: [`${i18n.t('requestSteps.de-registration.basic')}`,
-        `${i18n.t('requestSteps.de-registration.deviceModel')}`,
-        `${i18n.t('requestSteps.de-registration.approvalDocuments')}`],
+      stepsInfo: VIEW_STEPS.stepInfo,
+      stepsInfo2: VIEW_STEPS.deRegStepInfo,
       currentStep: 1,
       step1Data: {},
       step1Comments: [],
@@ -448,6 +443,9 @@ class ViewRequest extends Component {
                   hasReport: response.data.dereg_details.report_allowed
                 })
               }
+              this.setState({
+                stepReady: true
+              })
             }
             if (!isEmpty(response.data.reg_device)) {
               if (type === 'registration') {
@@ -614,6 +612,10 @@ class ViewRequest extends Component {
       })
     }
     else if (currentStep === 2 && step3Data) {
+      if(IS_AUTOMATE[0]){
+        this.props.history.push(`/search-requests`)
+      }
+      else { 
       this.setState({
         currentStep: 3,
       }, () => {
@@ -621,6 +623,7 @@ class ViewRequest extends Component {
           stepReady: true
         })
       })
+    }
     }
     else if (currentStep === 3) {
       this.props.history.push(`/search-requests`)

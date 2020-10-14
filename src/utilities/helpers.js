@@ -35,7 +35,11 @@ import {
   DE_DOCUMENTS,
   ENGLISH_REGEX,
   SPANISH_REGEX,
-  INDONESIAN_REGEX
+  INDONESIAN_REGEX,
+  REQUEST_STEPS,
+  IS_AUTOMATE,
+  VIEW_STEPS,
+  REVIEW_STEPS
 } from './constants';
 import FileSaver from "file-saver";
 import {lastIndexOf, take} from 'ramda'
@@ -82,6 +86,22 @@ export function fetchServerConfigData () {
         data.documents.de_registration.map((doc) => (
           DE_DOCUMENTS.push(doc)
         ))
+      }
+      if (data.system_config){
+        data.system_config.map((entry) => {
+          if (entry.label === "automate_imei_request")
+          {
+            IS_AUTOMATE[0] = entry.flag;
+            if(entry.flag){
+              REQUEST_STEPS.registration.pop();
+              REQUEST_STEPS.de_registration.pop();
+              VIEW_STEPS.stepInfo.pop();
+              VIEW_STEPS.deRegStepInfo.pop();
+              REVIEW_STEPS.registration.pop();
+              REVIEW_STEPS.de_registration.pop();
+            }
+          }
+        })
       }
     })
     .catch(error => {

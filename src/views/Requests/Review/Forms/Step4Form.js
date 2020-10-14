@@ -7,6 +7,7 @@ import UserInputReview from '../../../../components/Form/UserInputReview'
 import {isEmpty, isNil} from "ramda";
 import {getReviewStatus} from "../../../../utilities/helpers";
 import ImeiRegistration from "../Sections/ImeiRegistration";
+import {IS_AUTOMATE} from "../../../../utilities/constants";
 
 const Step4Form = ({
                      stepsNames,
@@ -50,7 +51,7 @@ const Step4Form = ({
             <React.Fragment>
               <Button onClick={callPrev} className="btn btn-link btn-next-prev">{i18n.t('previous')}</Button>
               <Button color="primary" onClick={jumpToNext} disabled={isNil(step4Data)}
-                      className='btn-next-prev'>{i18n.t('next')}</Button>
+                      className='btn-next-prev'>{IS_AUTOMATE[0] ? i18n.t('finish') : i18n.t('next')}</Button>
             </React.Fragment>
             }
             {type === 'review' &&

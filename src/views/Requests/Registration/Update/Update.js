@@ -60,7 +60,8 @@ import {
   TECHNOLOGIES,
   DOCUMENTS,
   EXTENSIONS,
-  REQUEST_STEPS
+  REQUEST_STEPS,
+  IS_AUTOMATE
 } from "../../../../utilities/constants";
 import CommentBox from "../../../../components/CommentSection/CommentBox";
 import StepLoading from "../../../../components/Loaders/StepLoading";
@@ -517,10 +518,10 @@ class UpdateRegistrationStep2 extends Component {
             <div className="text-right">
               <Button color="primary" type="submit" disabled={isSubmitting}
                       className={(!dirty && !anySectionChange) ? 'btn-next-prev d-none' : 'btn-next-prev d-inline-block'}>
-                {i18n.t('next')}</Button>{' '}
+                {IS_AUTOMATE[0] ? i18n.t('finish') : i18n.t('next')}</Button>{' '}
               <Button color="primary" onClick={this.props.jumpToNextStep}
                       className={(dirty || anySectionChange) ? 'btn-next-prev d-none' : 'btn-next-prev d-inline-block'}>
-                {i18n.t('next')}</Button>{' '}
+                {IS_AUTOMATE[0] ? i18n.t('finish') : i18n.t('next')}</Button>{' '}
             </div>
           </Col>
         </Row>
@@ -1289,8 +1290,26 @@ class Update extends Component {
     instance.put(`/registration/device`, formdata, config)
       .then((response) => {
         if (response.data) {
-          this.setState({anySectionChange: true});
-          this.updateTokenHOC(this.getStep3DataFromServer);
+          this.setState({stepReady: true, anySectionChange: true});
+          if(IS_AUTOMATE[0])
+          {
+            // Finish the Registration if Automatic registration is enabled
+            const statusDetails = {
+              id: requestId,
+              type: 'registration',
+              typeLabel: 'Registration',
+              icon: 'fa fa-check',
+              status: 'Pending Review',
+              action: 'Updated'
+            }
+            this.props.history.push({
+              pathname: '/request-status',
+              state: {details: statusDetails}
+            });
+          }
+          else{
+            this.updateTokenHOC(this.getStep3DataFromServer);
+          }
         }
       })
       .catch((error) => {
