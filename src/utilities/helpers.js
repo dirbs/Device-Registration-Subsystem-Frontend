@@ -456,34 +456,35 @@ export function errors(context, error, noToastr = false) {
           type: 'error'
         })
       } else if (error.response.status === 422 && !noToastr) {
-        console.log(error.response.data.message)
-        if (IsJsonString(error.response.data.message)) {
+        let errorMessages = '';
+        let errorResponse = error.response.data.message
+        if (errorResponse) {
+          Object.keys(errorResponse).map((key, i) => {
+            Object.keys(errorResponse[key]).map((innerKey, j) => {
+              errorMessages += errorResponse[key][innerKey] + '<br/>'
+            })
+          })
+          MySwal.fire({
+            title: i18n.t('errorLog'),
+            html: `<div>${errorMessages}</div>`,
+            type: 'error',
+            customClass: 'swal-wide'
+          })
+        }
 
+        let errors = error.response.data;
+        for (let key in errors) {
+          if (typeof errors[key][0] === 'object') {
+            for (let k in errors[key][0]) {
+
+            }
+          } else {
             SweetAlert({
               title: i18n.t('error'),
-              message: error.response.data.message,
+              message: errors[key][0],
               type: 'error'
             })
-            let errors = error.response.data;
-            for (let key in errors) {
-              if (typeof errors[key][0] === 'object') {
-                for (let k in errors[key][0]) {
-    
-                }
-              } else {
-                SweetAlert({
-                  title: i18n.t('error'),
-                  message: errors[key][0],
-                  type: 'error'
-                })
-              }
-            }
-        } else {
-          MySwal.fire({
-            title: i18n.t('error'),
-            html: `<textarea id='text' rows='8' cols='35'>${error.response.data.message}</textarea>`,
-            type: 'error'
-          })
+          }
         }
       } else if (error.response.status >= 500) {
         SweetAlert({
@@ -504,9 +505,9 @@ export function errors(context, error, noToastr = false) {
 
 function IsJsonString(str) {
   try {
-      JSON.parse(str);
+    JSON.parse(str);
   } catch (e) {
-      return false;
+    return false;
   }
   return true;
 }
