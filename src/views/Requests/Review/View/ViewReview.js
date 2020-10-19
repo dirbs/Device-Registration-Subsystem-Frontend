@@ -86,7 +86,7 @@ export const Steps = ({
                 <p>{t('assignee')}: <span className='text-primary'>{assignedTo}</span> - {t('status')}: <span
                   className={getStatusClass(requestStatus, 'text')}>{i18n.t(requestStatus)}</span></p>
                 }
-                {!assigned &&
+                {(!assigned && !IS_AUTOMATE[0]) &&
                 <div className='steps-status'>
                   <p>{t('status')}: <span className={getStatusClass(requestStatus, 'text')}>{i18n.t(requestStatus)}</span></p>
                   <Button onClick={gotoReview} color="primary" size="sm">{t('assignRequest')}</Button>
