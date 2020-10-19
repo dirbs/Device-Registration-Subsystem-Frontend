@@ -60,7 +60,9 @@ import {
 import {
   DOCUMENTS,
   DE_DOCUMENTS,
-  EXTENSIONS, REQUEST_STEPS,
+  EXTENSIONS,
+  REQUEST_STEPS,
+  IS_AUTOMATE
 } from "../../../../utilities/constants";
 import StepLoading from "../../../../components/Loaders/StepLoading";
 import i18n from "../../../../i18n";
@@ -832,10 +834,27 @@ class NewDeregistrationRequest extends Component {
     instance.post(`/deregistration/devices`, formdata, config)
       .then((response) => {
         if (response.data.dreg_id) {
-          this.setState({step: 3}, () => {
             this.updateTokenHOC(this.getPrevStepsDataFromServer, id);
             this.setState({stepReady: true});
-          });
+            if (IS_AUTOMATE[0])
+            {
+              // Finish the De-Registration WITHOUT 3RD STEP IF AUTOMATIC REGISTRATION IS TRUE
+              const statusDetails = {
+                id: id,
+                type: 'deregistration',
+                typeLabel: 'De-registration',
+                icon: 'fa fa-check',
+                status: 'Pending Review',
+                action: 'Submitted'
+              }
+              this.props.history.push({
+                pathname: '/request-status',
+                state: {details: statusDetails}
+              });
+            }
+            else {
+            this.setState({step: 3});
+            }
         }
       })
       .catch((error) => {
