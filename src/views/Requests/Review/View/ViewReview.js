@@ -325,61 +325,86 @@ class ViewReview extends Component {
         if (response.status === 200) {
           for (let step in response.data.sections) {
             if (response.data.sections[step].section_type === 'device_quota') {
+              let modifiedComments = response.data.sections[step].comments.map(value => {
+                let obj = value;
+                obj.sectionType = response.data.sections[step].section_type;
+                return obj;
+              })
               this.setState({
                 ...this.state,
                 steps: {
                   ...this.state.steps,
                   step1: {
                     ...this.state.steps.step1,
-                    comments: response.data.sections[step].comments,
+                    comments: modifiedComments,
                   },
                 }
               })
             }
             else if (response.data.sections[step].section_type === 'device_description') {
+              let modifiedComments = response.data.sections[step].comments.map(value => {
+                let obj = value;
+                obj.sectionType = response.data.sections[step].section_type;
+                return obj;
+              })
               this.setState({
                 ...this.state,
                 steps: {
                   ...this.state.steps,
                   step2: {
                     ...this.state.steps.step2,
-                    comments: response.data.sections[step].comments,
+                    comments: modifiedComments,
                   },
                 }
               })
             }
             else if (response.data.sections[step].section_type === 'imei_classification') {
+              let modifiedComments = response.data.sections[step].comments.map(value => {
+                let obj = value;
+                obj.sectionType = response.data.sections[step].section_type;
+                return obj;
+              })
               this.setState({
                 ...this.state,
                 steps: {
                   ...this.state.steps,
                   step3: {
                     ...this.state.steps.step3,
-                    comments: response.data.sections[step].comments,
+                    comments: modifiedComments,
                   },
                 }
               })
             }
             else if (response.data.sections[step].section_type === 'imei_registration') {
+              let modifiedComments = response.data.sections[step].comments.map(value => {
+                let obj = value;
+                obj.sectionType = response.data.sections[step].section_type;
+                return obj;
+              })
               this.setState({
                 ...this.state,
                 steps: {
                   ...this.state.steps,
                   step4: {
                     ...this.state.steps.step4,
-                    comments: response.data.sections[step].comments,
+                    comments: modifiedComments,
                   },
                 }
               })
             }
             else if (response.data.sections[step].section_type === 'approval_documents') {
+              let modifiedComments = response.data.sections[step].comments.map(value => {
+                let obj = value;
+                obj.sectionType = response.data.sections[step].section_type;
+                return obj;
+              })
               this.setState({
                 ...this.state,
                 steps: {
                   ...this.state.steps,
                   step5: {
                     ...this.state.steps.step5,
-                    comments: response.data.sections[step].comments,
+                    comments: modifiedComments,
                   },
                 }
               })
@@ -388,7 +413,7 @@ class ViewReview extends Component {
         }
       })
       .catch((error) => {
-        errors(this, error);
+        //errors(this, error);
       })
   }
 

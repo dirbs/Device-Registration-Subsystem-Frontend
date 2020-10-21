@@ -510,7 +510,9 @@ class ViewRequest extends Component {
             if (section.section_type === 'device_quota') {
               if (!isNil(section.comments) && !isEmpty(section.comments)) {
                 section.comments.map((value) => {
-                  step1comments.push(value)
+                  let obj = value;
+                  obj.sectionType = section.section_type;
+                  step1comments.push(obj)
                   return this.setState({
                     step1Comments: step1comments
                   });
@@ -524,7 +526,9 @@ class ViewRequest extends Component {
             else if (section.section_type === 'device_description') {
               if (!isNil(section.comments) && !isEmpty(section.comments)) {
                 section.comments.map((value) => {
-                  step2comments.push(value)
+                  let obj = value;
+                  obj.sectionType = section.section_type;
+                  step2comments.push(obj)
                    return this.setState({
                     step2Comments: step2comments
                   });
@@ -534,7 +538,9 @@ class ViewRequest extends Component {
             else if (section.section_type === 'imei_classification') {
               if (!isNil(section.comments) && !isEmpty(section.comments)) {
                 section.comments.map((value) => {
-                  step1comments.push(value)
+                  let obj = value;
+                  obj.sectionType = section.section_type;
+                  step1comments.push(obj)
                   return this.setState({
                     step1Comments: step1comments
                   });
@@ -544,7 +550,9 @@ class ViewRequest extends Component {
             else if (section.section_type === 'imei_registration') {
               if (!isNil(section.comments) && !isEmpty(section.comments)) {
                 section.comments.map((value) => {
-                  step1comments.push(value)
+                  let obj = value;
+                  obj.sectionType = section.section_type;
+                  step1comments.push(obj);
                   return this.setState({
                     step1Comments: step1comments
                   });
@@ -554,7 +562,9 @@ class ViewRequest extends Component {
             else if (section.section_type === 'approval_documents') {
               if (!isNil(section.comments) && !isEmpty(section.comments)) {
                 section.comments.map((value) => {
-                  step3comments.push(value)
+                  let obj = value;
+                  obj.sectionType = section.section_type;
+                  step3comments.push(obj)
                   return this.setState({
                     step3Comments: step3comments,
                     stepReady: true

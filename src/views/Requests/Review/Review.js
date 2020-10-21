@@ -527,8 +527,13 @@ class Review extends Component {
           for (let step in response.data.sections) {
             if (response.data.sections[step].section_type === 'device_quota') {
               if (!isNil(response.data.sections[step].section_status)) {
+                let modifiedComments = response.data.sections[step].comments.map(value => {
+                  let obj = value;
+                  obj.sectionType = response.data.sections[step].section_type;
+                  return obj;
+                })
                 this.setState(state => {
-                  const updateComments = set(step1Comments, response.data.sections[step].comments, state)
+                  const updateComments = set(step1Comments, modifiedComments, state)
                   const updateStatus = set(step1Status, response.data.sections[step].section_status, updateComments)
                   const updatePrevStatus = set(step1PrevStatus, response.data.sections[step].section_status, updateStatus)
                   const updateFeedback = set(step1Feedback, response.data.sections[step].comments[0].comment, updatePrevStatus)
@@ -548,8 +553,13 @@ class Review extends Component {
             }
             else if (response.data.sections[step].section_type === 'device_description') {
               if (!isNil(response.data.sections[step].section_status)) {
+                let modifiedComments = response.data.sections[step].comments.map(value => {
+                  let obj = value;
+                  obj.sectionType = response.data.sections[step].section_type;
+                  return obj;
+                })
                 this.setState(state => {
-                  const updateComments = set(step2Comments, response.data.sections[step].comments, state)
+                  const updateComments = set(step2Comments, modifiedComments, state)
                   const updateStatus = set(step2Status, response.data.sections[step].section_status, updateComments)
                   const updatePrevStatus = set(step2PrevStatus, response.data.sections[step].section_status, updateStatus)
                   const updateFeedback = set(step2Feedback, response.data.sections[step].comments[0].comment, updatePrevStatus)
@@ -569,8 +579,13 @@ class Review extends Component {
             }
             else if (response.data.sections[step].section_type === 'imei_classification') {
               if (!isNil(response.data.sections[step].section_status)) {
+                let modifiedComments = response.data.sections[step].comments.map(value => {
+                  let obj = value;
+                  obj.sectionType = response.data.sections[step].section_type;
+                  return obj;
+                })
                 this.setState(state => {
-                  const updateComments = set(step3Comments, response.data.sections[step].comments, state)
+                  const updateComments = set(step3Comments, modifiedComments, state)
                   const updateStatus = set(step3Status, response.data.sections[step].section_status, updateComments)
                   const updatePrevStatus = set(step3PrevStatus, response.data.sections[step].section_status, updateStatus)
                   const updateFeedback = set(step3Feedback, response.data.sections[step].comments[0].comment, updatePrevStatus)
@@ -590,8 +605,13 @@ class Review extends Component {
             }
             else if (response.data.sections[step].section_type === 'imei_registration') {
               if (!isNil(response.data.sections[step].section_status)) {
+                let modifiedComments = response.data.sections[step].comments.map(value => {
+                  let obj = value;
+                  obj.sectionType = response.data.sections[step].section_type;
+                  return obj;
+                })
                 this.setState(state => {
-                  const updateComments = set(step4Comments, response.data.sections[step].comments, state)
+                  const updateComments = set(step4Comments, modifiedComments, state)
                   const updateStatus = set(step4Status, response.data.sections[step].section_status, updateComments)
                   const updatePrevStatus = set(step4PrevStatus, response.data.sections[step].section_status, updateStatus)
                   const updateFeedback = set(step4Feedback, response.data.sections[step].comments[0].comment, updatePrevStatus)
@@ -611,8 +631,13 @@ class Review extends Component {
             }
             else if (response.data.sections[step].section_type === 'approval_documents') {
               if (!isNil(response.data.sections[step].section_status)) {
+                let modifiedComments = response.data.sections[step].comments.map(value => {
+                  let obj = value;
+                  obj.sectionType = response.data.sections[step].section_type;
+                  return obj;
+                })
                 this.setState(state => {
-                  const updateComments = set(step5Comments, response.data.sections[step].comments, state)
+                  const updateComments = set(step5Comments, modifiedComments, state)
                   const updateStatus = set(step5Status, response.data.sections[step].section_status, updateComments)
                   const updatePrevStatus = set(step5PrevStatus, response.data.sections[step].section_status, updateStatus)
                   const updateFeedback = set(step5Feedback, response.data.sections[step].comments[0].comment, updatePrevStatus)
