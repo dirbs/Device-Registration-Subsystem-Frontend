@@ -676,7 +676,9 @@ class Update extends Component {
             if (response.data.sections[step].section_type === 'device_description') {
               if (response.data.sections[step].comments !== null && response.data.sections[step].comments.length > 0) {
                 response.data.sections[step].comments.map((value) => {
-                  step2comments.push(value)
+                  let obj = value;
+                  obj.sectionType = response.data.sections[step].section_type;
+                  step2comments.push(obj)
                   return this.setState({
                     step2Comments: step2comments
                   });
@@ -690,7 +692,9 @@ class Update extends Component {
             else if (response.data.sections[step].section_type === 'imei_classification') {
               if (response.data.sections[step].comments !== null && response.data.sections[step].comments.length > 0) {
                 response.data.sections[step].comments.map((value) => {
-                  step1comments.push(value)
+                  let obj = value;
+                  obj.sectionType = response.data.sections[step].section_type;
+                  step1comments.push(obj)
                   return this.setState({
                     step1Comments: step1comments
                   });
@@ -700,7 +704,9 @@ class Update extends Component {
             else if (response.data.sections[step].section_type === 'imei_registration') {
               if (response.data.sections[step].comments !== null && response.data.sections[step].comments.length > 0) {
                 response.data.sections[step].comments.map((value) => {
-                  step1comments.push(value)
+                  let obj = value;
+                  obj.sectionType = response.data.sections[step].section_type;
+                  step1comments.push(obj)
                   return this.setState({
                     step1Comments: step1comments
                   });
@@ -710,7 +716,9 @@ class Update extends Component {
             else if (response.data.sections[step].section_type === 'approval_documents') {
               if (response.data.sections[step].comments !== null && response.data.sections[step].comments.length > 0) {
                 response.data.sections[step].comments.map((value) => {
-                  step3comments.push(value)
+                  let obj = value;
+                  obj.sectionType = response.data.sections[step].section_type;
+                  step3comments.push(obj)
                   return this.setState({
                     step3Comments: step3comments,
                     stepReady: true

@@ -29,6 +29,7 @@ import { Link } from "react-router-dom";
 
 class RequestStatus extends Component {
   render() {
+    console.log('test');
     const {details} = this.props.location.state;
     return (
       <div>
@@ -44,8 +45,12 @@ class RequestStatus extends Component {
                   <span>{details.typeLabel}</span>
                   {i18n.t('requestStatusBodyText.id')}
                   <span>{details.id}</span>
+                  {(details.type === 'registration' || details.type === 'deregistration') && details.status === 'Pending Review' ? null :
+                  <>
                   {i18n.t('requestStatusBodyText.status')}
-                  <span>{details.status}</span>
+                  <span>{i18n.t(details.status)}</span>
+                  </>
+                  }
               </p>
               <p>{i18n.t('requestStatusPage.infoText')}</p>
             </div>
@@ -65,8 +70,12 @@ class RequestStatus extends Component {
                   <span>{i18n.t(details.typeLabel)}</span>
                   {i18n.t('requestStatusBodyText.id')}
                   <span>{details.id}</span>
+                  {(details.type === 'registration' || details.type === 'deregistration') && details.status === 'Pending Review' ? null :
+                  <>
                   {i18n.t('requestStatusBodyText.status')}
                   <span>{i18n.t(details.status)}</span>
+                  </>
+                  }
                 </>
               </p>
               <p>{i18n.t('requestStatusPage.infoText')}</p>

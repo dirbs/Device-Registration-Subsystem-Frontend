@@ -24,7 +24,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import React, {Component} from 'react';
 import {translate, I18n} from 'react-i18next';
-import {REVIEW_STEPS} from "../../../../utilities/constants";
+import {REVIEW_STEPS, IS_AUTOMATE} from "../../../../utilities/constants";
 import {
   Button
 } from 'reactstrap';
@@ -86,7 +86,7 @@ export const Steps = ({
                 <p>{t('assignee')}: <span className='text-primary'>{assignedTo}</span> - {t('status')}: <span
                   className={getStatusClass(requestStatus, 'text')}>{i18n.t(requestStatus)}</span></p>
                 }
-                {!assigned &&
+                {(!assigned && !IS_AUTOMATE[0]) &&
                 <div className='steps-status'>
                   <p>{t('status')}: <span className={getStatusClass(requestStatus, 'text')}>{i18n.t(requestStatus)}</span></p>
                   <Button onClick={gotoReview} color="primary" size="sm">{t('assignRequest')}</Button>
@@ -325,61 +325,86 @@ class ViewReview extends Component {
         if (response.status === 200) {
           for (let step in response.data.sections) {
             if (response.data.sections[step].section_type === 'device_quota') {
+              let modifiedComments = response.data.sections[step].comments.map(value => {
+                let obj = value;
+                obj.sectionType = response.data.sections[step].section_type;
+                return obj;
+              })
               this.setState({
                 ...this.state,
                 steps: {
                   ...this.state.steps,
                   step1: {
                     ...this.state.steps.step1,
-                    comments: response.data.sections[step].comments,
+                    comments: modifiedComments,
                   },
                 }
               })
             }
             else if (response.data.sections[step].section_type === 'device_description') {
+              let modifiedComments = response.data.sections[step].comments.map(value => {
+                let obj = value;
+                obj.sectionType = response.data.sections[step].section_type;
+                return obj;
+              })
               this.setState({
                 ...this.state,
                 steps: {
                   ...this.state.steps,
                   step2: {
                     ...this.state.steps.step2,
-                    comments: response.data.sections[step].comments,
+                    comments: modifiedComments,
                   },
                 }
               })
             }
             else if (response.data.sections[step].section_type === 'imei_classification') {
+              let modifiedComments = response.data.sections[step].comments.map(value => {
+                let obj = value;
+                obj.sectionType = response.data.sections[step].section_type;
+                return obj;
+              })
               this.setState({
                 ...this.state,
                 steps: {
                   ...this.state.steps,
                   step3: {
                     ...this.state.steps.step3,
-                    comments: response.data.sections[step].comments,
+                    comments: modifiedComments,
                   },
                 }
               })
             }
             else if (response.data.sections[step].section_type === 'imei_registration') {
+              let modifiedComments = response.data.sections[step].comments.map(value => {
+                let obj = value;
+                obj.sectionType = response.data.sections[step].section_type;
+                return obj;
+              })
               this.setState({
                 ...this.state,
                 steps: {
                   ...this.state.steps,
                   step4: {
                     ...this.state.steps.step4,
-                    comments: response.data.sections[step].comments,
+                    comments: modifiedComments,
                   },
                 }
               })
             }
             else if (response.data.sections[step].section_type === 'approval_documents') {
+              let modifiedComments = response.data.sections[step].comments.map(value => {
+                let obj = value;
+                obj.sectionType = response.data.sections[step].section_type;
+                return obj;
+              })
               this.setState({
                 ...this.state,
                 steps: {
                   ...this.state.steps,
                   step5: {
                     ...this.state.steps.step5,
-                    comments: response.data.sections[step].comments,
+                    comments: modifiedComments,
                   },
                 }
               })
@@ -388,7 +413,7 @@ class ViewReview extends Component {
         }
       })
       .catch((error) => {
-        errors(this, error);
+        //errors(this, error);
       })
   }
 
@@ -623,6 +648,11 @@ class ViewReview extends Component {
         })
       }
       else if (steps.currentStep === 4) {
+        if(IS_AUTOMATE[0])
+        {
+          this.props.history.push(`/dashboard`)
+        }
+        else {
         this.setState({
           steps: {
             ...this.state.steps,
@@ -633,6 +663,7 @@ class ViewReview extends Component {
             stepReady: true
           })
         })
+      }
       }
       else if (steps.currentStep === 5) {
         this.props.history.push(`/dashboard`)
@@ -664,6 +695,11 @@ class ViewReview extends Component {
         })
       }
       else if (steps.currentStep === 3) {
+        if(IS_AUTOMATE[0])
+        {
+          this.props.history.push(`/dashboard`)
+        }
+        else {
         this.setState({
           steps: {
             ...this.state.steps,
@@ -674,6 +710,7 @@ class ViewReview extends Component {
             stepReady: true
           })
         })
+      }
       }
       else if (steps.currentStep === 4) {
         this.props.history.push(`/dashboard`)

@@ -23,10 +23,10 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import React, {Component} from 'react';
-import {translate, I18n} from 'react-i18next';
+import React, { Component } from 'react';
+import { translate, I18n } from 'react-i18next';
 import i18n from './../../../../i18n'
-import {withFormik, Field, FieldArray} from 'formik';
+import { withFormik, Field, FieldArray } from 'formik';
 import {
   Row,
   Col,
@@ -68,10 +68,11 @@ import {
   TECHNOLOGIES,
   DOCUMENTS,
   EXTENSIONS,
-  REQUEST_STEPS
+  REQUEST_STEPS,
+  IS_AUTOMATE
 } from "../../../../utilities/constants";
 import StepLoading from "../../../../components/Loaders/StepLoading";
-import {isNil, isEmpty, mapObjIndexed,equals,all,keys} from 'ramda';
+import { isNil, isEmpty, mapObjIndexed, equals, all, keys } from 'ramda';
 import ReactTootip from 'react-tooltip'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -124,7 +125,7 @@ class NewRegistrationStep1 extends Component {
               <p><i className="fa fa-file-text-o fa-3x"></i>{i18n.t('simpleImeiFile')}</p>
               <p className="text-right">
                 <button onClick={(e) => {
-                  downloadSampleFile(kcProps,'registration', e)
+                  downloadSampleFile(kcProps, 'registration', e)
                 }} className="btn btn-outline-dark">{i18n.t('downloadFile')}</button>
               </p>
             </div>
@@ -143,14 +144,14 @@ class NewRegistrationStep1 extends Component {
               </CardHeader>
               <CardBody className='steps-loading'>
                 {!stepReady &&
-                <StepLoading></StepLoading>
+                  <StepLoading></StepLoading>
                 }
                 <div>
                   <Row>
                     <Col xs={12} sm={6}>
                       <FormGroup>
                         <Label>{i18n.t('deviceCount')} <i className="fa fa-question-circle text-secondary" data-tip
-                                               data-for='dCount'></i> <span className="text-danger">*</span>
+                          data-for='dCount'></i> <span className="text-danger">*</span>
                           <ReactTootip id="dCount" effect="solid">
                             <p>{i18n.t('requestInstructions.1')}:</p>
                             <ol className="ol-list">
@@ -169,23 +170,23 @@ class NewRegistrationStep1 extends Component {
                           valid={(touched.device_count && errors.device_count) ? false : null}
                         />
                         {errors.device_count && touched.device_count &&
-                        <FormFeedback className="d-block">
-                          {errors.device_count}
-                        </FormFeedback>}
+                          <FormFeedback className="d-block">
+                            {errors.device_count}
+                          </FormFeedback>}
                       </FormGroup>
                     </Col>
                     <Col xs={12} sm={6}>
                       <Field name="imei_per_device" component={renderInput}
-                             label={i18n.t('numberOfImeis')} type="text"
-                             placeholder={i18n.t('numberOfImeis')} requiredStar
-                             disable={values.device_imei === 'webpage' && values.devices.length > 0}/>
+                        label={i18n.t('numberOfImeis')} type="text"
+                        placeholder={i18n.t('numberOfImeis')} requiredStar
+                        disable={values.device_imei === 'webpage' && values.devices.length > 0} />
                     </Col>
                   </Row>
                   <Row>
                     <Col xs={12} md={6}>
                       <FormGroup>
                         <Label>{i18n.t('deviceIMEIs')} <i className="fa fa-question-circle text-secondary" data-tip
-                                                 data-for='dImeis'></i>
+                          data-for='dImeis'></i>
                           <ReactTootip id="dImeis" effect="solid">
                             <p>{i18n.t('requestInstructions.4')}.</p>
                             <ol className='ol-list'>
@@ -209,10 +210,10 @@ class NewRegistrationStep1 extends Component {
                                 className="d-none"
                               />
                               {(values.device_imei === 'tsv') &&
-                              <div>
-                                <i className="fa fa-check"></i>
-                                <span className="ml-2">{i18n.t('tabDelimitedFile.label')}</span>
-                              </div>}
+                                <div>
+                                  <i className="fa fa-check"></i>
+                                  <span className="ml-2">{i18n.t('tabDelimitedFile.label')}</span>
+                                </div>}
                             </label>
                             <label>
                               <input
@@ -226,10 +227,10 @@ class NewRegistrationStep1 extends Component {
                                 className="d-none"
                               />
                               {(values.device_imei === 'webpage') &&
-                              <div>
-                                <i className="fa fa-check"></i>
-                                <span className="ml-2">{i18n.t('webInput.label')}</span>
-                              </div>
+                                <div>
+                                  <i className="fa fa-check"></i>
+                                  <span className="ml-2">{i18n.t('webInput.label')}</span>
+                                </div>
                               }
                             </label>
                           </div>
@@ -248,123 +249,127 @@ class NewRegistrationStep1 extends Component {
                             ))}
                           </Field>
                         </div>
-                        <Field name="m_location" component={renderError}/>
+                        <Field name="m_location" component={renderError} />
                       </FormGroup>
                     </Col>
                   </Row>
                   {values.device_imei === 'webpage' &&
-                  <Row>
-                    <Col xs={12}>
-                      <div className="devices-imeis">
-                        <div className="devices-heading">
-                          <b>{i18n.t('devicesList')}</b>
-                        </div>
-                        <div>
-                          <div className="read-box position-relative">
-                            <FieldArray
-                              name="devices"
-                              render={({insert, remove, push}) => {
-                                let imeis = [];
-                                if (values.imei_per_device > 0) {
-                                  for (let i = 0; i < values.imei_per_device; i++) {
-                                    imeis[i] = {};
-                                    imeis[i].imei = '';
-                                    imeis[i].reImei = '';
+                    <Row>
+                      <Col xs={12}>
+                        <div className="devices-imeis">
+                          <div className="devices-heading">
+                            <b>{i18n.t('devicesList')}</b>
+                          </div>
+                          <div>
+                            <div className="read-box position-relative">
+                              <FieldArray
+                                name="devices"
+                                render={({ insert, remove, push }) => {
+                                  let imeis = [];
+                                  if (values.imei_per_device > 0) {
+                                    for (let i = 0; i < values.imei_per_device; i++) {
+                                      imeis[i] = {};
+                                      imeis[i].imei = '';
+                                      imeis[i].reImei = '';
+                                    }
                                   }
-                                }
-                                return (
-                                  <div>
-                                    {values.devices.length > 0 &&
-                                    values.devices.map((device, index) => (
-                                      <div key={index} className="device-box">
-                                        <Button type="button" size="sm" color="danger" onClick={() => {
-                                          MySwal.fire({
-                                            title: i18n.t('alert.warning'),
-                                            text: i18n.t('alert.text1'),
-                                            type: 'question',
-                                            showCancelButton: true,
-                                            confirmButtonText: i18n.t('ok'),
-                                            cancelButtonText: i18n.t('cancel')
-                                          }).then((result)=>{
-                                            if(result.value){
-                                              remove(index)
-                                            }
-                                          })
-                                        }} className="btn-del-device">{i18n.t('delete')}</Button>
-                                        <FieldArray
-                                          name="imeis"
-                                          render={({insert, remove, push}) => (
-                                            <Card>
-                                              <CardHeader><b>{i18n.t('device')} # {index + 1}</b></CardHeader>
-                                              {values.devices[index].imeis.length &&
-                                              values.devices[index].imeis.map((imei, i) => (
-                                                <CardBody key={i} className="pt-0 pb-0">
-                                                  <div className="imei-row">
-                                                    <div className="imei-col">
-                                                      IMEI # {i + 1}
-                                                    </div>
-                                                    <div className="imei-col">
-                                                      <Field name={`devices.${index}.imeis.${i}.imei`}
-                                                             component={doubleEntryInput} type="text"
-                                                             placeholder={`${i18n.t('typeImei')} ${i + 1}`}/>
-                                                      {errors.devices && touched.devices &&
-                                                      <RenderArrayError errors={errors.devices}
-                                                                        touched={touched.devices} mainIndex={index}
-                                                                        innerIndex={i} field="imei"/>}
-                                                    </div>
-                                                    <div className="imei-col">
-                                                      <Field name={`devices.${index}.imeis.${i}.reImei`}
-                                                             component={doubleEntryInput} type="text"
-                                                             placeholder={`${i18n.t('reTypeImei')} ${i + 1}`}/>
-                                                      {errors.devices && touched.devices &&
-                                                      <RenderArrayError errors={errors.devices}
-                                                                        touched={touched.devices} mainIndex={index}
-                                                                        innerIndex={i} field="reImei"/>}
-                                                    </div>
-                                                  </div>
-                                                </CardBody>
-                                              ))}
-                                            </Card>
-                                          )}
-                                        />
-                                      </div>
-                                    ))}
-                                    <Button color="outline-primary" type="button" onClick={() => push({imeis})}
-                                            size="sm"
-                                            className={(
-                                              (errors['device_count'] ||
-                                                errors['imei_per_device'] ||
-                                                values.devices.length === parseInt(values.device_count))) ?
-                                              'd-none' : 'd-inline-block webpage-add-devices'}>
-                                      {i18n.t('addDevice')}
-                                    </Button>
-                                  </div>
-                                )
-                              }}
-                            />
-                            {errors.imei_per_device === undefined &&
-                              <Field name="imeis_count" component={renderError} class="alert alert-danger"/>
-                            }
+                                  return (
+                                    <div>
+                                      {values.devices.length > 0 &&
+                                        values.devices.map((device, index) => (
+                                          <div key={index} className="device-box">
+                                            <Button type="button" size="sm" color="danger" onClick={() => {
+                                              MySwal.fire({
+                                                title: i18n.t('alert.warning'),
+                                                text: i18n.t('alert.text1'),
+                                                type: 'question',
+                                                showCancelButton: true,
+                                                confirmButtonText: i18n.t('ok'),
+                                                cancelButtonText: i18n.t('cancel')
+                                              }).then((result) => {
+                                                if (result.value) {
+                                                  remove(index)
+                                                }
+                                              })
+                                            }} className="btn-del-device">{i18n.t('delete')}</Button>
+                                            <FieldArray
+                                              name="imeis"
+                                              render={({ insert, remove, push }) => (
+                                                <Card>
+                                                  <CardHeader><b>{i18n.t('device')} # {index + 1}</b></CardHeader>
+                                                  {values.devices[index].imeis.length &&
+                                                    values.devices[index].imeis.map((imei, i) => (
+                                                      <CardBody key={i} className="pt-0 pb-0">
+                                                        <div className="imei-row">
+                                                          <div className="imei-col">
+                                                            IMEI # {i + 1}
+                                                          </div>
+                                                          <div className="imei-col">
+                                                            <Field name={`devices.${index}.imeis.${i}.imei`}
+                                                              component={doubleEntryInput} type="text"
+                                                              placeholder={`${i18n.t('typeImei')} ${i + 1}`} />
+                                                            {errors.devices && touched.devices &&
+                                                              <RenderArrayError errors={errors.devices}
+                                                                touched={touched.devices} mainIndex={index}
+                                                                innerIndex={i} field="imei" />}
+                                                          </div>
+                                                          <div className="imei-col">
+                                                            <Field name={`devices.${index}.imeis.${i}.reImei`}
+                                                              component={doubleEntryInput} type="text"
+                                                              placeholder={`${i18n.t('reTypeImei')} ${i + 1}`} />
+                                                            {errors.devices && touched.devices &&
+                                                              <RenderArrayError errors={errors.devices}
+                                                                touched={touched.devices} mainIndex={index}
+                                                                innerIndex={i} field="reImei" />}
+                                                          </div>
+                                                        </div>
+                                                      </CardBody>
+                                                    ))}
+                                                </Card>
+                                              )}
+                                            />
+                                          </div>
+                                        ))}
+                                      <Button color="outline-primary" type="button" onClick={() => push({ imeis })}
+                                        size="sm"
+                                        className={(
+                                          (errors['device_count'] ||
+                                            errors['imei_per_device'] ||
+                                            values.devices.length === parseInt(values.device_count))) ?
+                                          'd-none' : 'd-inline-block webpage-add-devices'}>
+                                        {i18n.t('addDevice')}
+                                      </Button>
+                                    </div>
+                                  )
+                                }}
+                              />
+                              {errors.imei_per_device === undefined &&
+                                <>
+                                  <Field name="imeis_count" component={renderError} class="alert alert-danger" />
+                                  <br/>
+                                  <br/>
+                                </>
+                              }
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Col>
-                  </Row>
+                      </Col>
+                    </Row>
                   }
                   {values.device_imei === 'tsv' &&
-                  <RenderFileInput
-                    onChange={setFieldValue}
-                    onBlur={setFieldTouched}
-                    error={errors.filename}
-                    touched={touched.filename}
-                    values={values.filename}
-                    fieldName="filename"
-                    type="file"
-                    inputClass="asitfield"
-                    inputClassError="asitfield is-invalid"
-                    label={i18n.t('tabDelimitedFile.select')}
-                    requiredStar
-                  />
+                    <RenderFileInput
+                      onChange={setFieldValue}
+                      onBlur={setFieldTouched}
+                      error={errors.filename}
+                      touched={touched.filename}
+                      values={values.filename}
+                      fieldName="filename"
+                      type="file"
+                      inputClass="asitfield"
+                      inputClassError="asitfield is-invalid"
+                      label={i18n.t('tabDelimitedFile.select')}
+                      requiredStar
+                    />
                   }
                 </div>
               </CardBody>
@@ -427,23 +432,23 @@ class NewRegistrationStep2 extends Component {
                 </CardHeader>
                 <CardBody className='steps-loading'>
                   {!stepReady &&
-                  <StepLoading></StepLoading>
+                    <StepLoading></StepLoading>
                   }
                   <div>
                     <Row>
                       <Col xs={12} sm={6}>
                         <Field name="brand" component={renderInput}
-                               label={i18n.t('brand')} placeholder={i18n.t('brand')} type="text" requiredStar  text={values.brand}/>
+                          label={i18n.t('brand')} placeholder={i18n.t('brand')} type="text" requiredStar text={values.brand} />
                       </Col>
                       <Col xs={12} sm={6}>
                         <Field name="model_name" component={renderInput}
-                               label={i18n.t('model')} placeholder={i18n.t('model')} type="text" requiredStar/>
+                          label={i18n.t('model')} placeholder={i18n.t('model')} type="text" requiredStar />
                       </Col>
                     </Row>
                     <Row>
                       <Col xs={12} sm={6}>
                         <Field name="model_num" component={renderInput} label={i18n.t('modelnumber')}
-                               placeholder={i18n.t('modelnumber')} type="text" requiredStar/>
+                          placeholder={i18n.t('modelnumber')} type="text" requiredStar />
                       </Col>
                       <Col xs={12} sm={6}>
                         <FormGroup>
@@ -453,19 +458,19 @@ class NewRegistrationStep2 extends Component {
                               <option value="">{i18n.t('selectDeviceType')}</option>
                               {DEVICE_TYPES.map((deviceType, i) => (
                                 <option value={deviceType.description}
-                                        key={i}>{i18n.t(deviceType.description)}</option>
+                                  key={i}>{i18n.t(deviceType.description)}</option>
                               ))}
                             </Field>
                           </div>
-                          <Field name="device_type" component={renderError}/>
+                          <Field name="device_type" component={renderError} />
                         </FormGroup>
                       </Col>
                     </Row>
                     <Row>
                       <Col xs={12} sm={6}>
                         <Field name="operating_system" component={renderInput}
-                               label={i18n.t('operatingSystem')} placeholder={i18n.t('operatingSystem')}
-                               type="text" requiredStar/>
+                          label={i18n.t('operatingSystem')} placeholder={i18n.t('operatingSystem')}
+                          type="text" requiredStar />
                       </Col>
                       <Col xs={12} sm={6}>
                         <FieldArray
@@ -496,7 +501,7 @@ class NewRegistrationStep2 extends Component {
                                   </div>
                                 ))}
                               </div>
-                              <Field name="technologies" component={renderError}/>
+                              <Field name="technologies" component={renderError} />
                             </FormGroup>
                           )}
                         />
@@ -506,7 +511,7 @@ class NewRegistrationStep2 extends Component {
                 </CardBody>
               </Card>
               <div className="text-right">
-                <Button color="primary" type="submit" disabled={isSubmitting}>{i18n.t('next')}</Button>{' '}
+                <Button color="primary" type="submit" disabled={isSubmitting}>{IS_AUTOMATE[0] ? i18n.t('finish') : i18n.t('next')}</Button>{' '}
               </div>
             </Col>
           </Row>
@@ -565,7 +570,7 @@ class NewRegistrationStep3 extends Component {
                 </CardHeader>
                 <CardBody className='steps-loading'>
                   {!stepReady &&
-                  <StepLoading></StepLoading>
+                    <StepLoading></StepLoading>
                   }
                   <div>
                     <FieldArray
@@ -623,6 +628,7 @@ const EnhancedNewRegistrationStep1 = withFormik({
   // Custom sync validation
   validate: values => {
     let errors = {};
+    let jointArray = [];
     if (!values.device_count) {
       errors.device_count = i18n.t('fieldRequired')
     } else if (isNaN(Number(values.device_count))) {
@@ -650,6 +656,7 @@ const EnhancedNewRegistrationStep1 = withFormik({
         for (let i = 0; i < parseInt(values.device_count); i++) {
           if (typeof values.devices[i] !== 'undefined') {
             for (let j = 0; j < parseInt(values.imei_per_device); j++) {
+              jointArray.push(values.devices[i].imeis[j].imei)
               if (typeof errors.devices === "undefined") {
                 errors.devices = [];
               }
@@ -702,7 +709,8 @@ const EnhancedNewRegistrationStep1 = withFormik({
         }
       }
 
-    } else if (values.device_imei === 'tsv') {
+    }
+    else if (values.device_imei === 'tsv') {
 
       if (!values.filename) {
         errors.filename = i18n.t('fieldRequired')
@@ -711,10 +719,13 @@ const EnhancedNewRegistrationStep1 = withFormik({
       }
     }
 
+    if (new Set(jointArray).size !== jointArray.length) {
+      errors.imeis_count = i18n.t('duplicatedIMEIs')
+    }
+
     if (!values.m_location) {
       errors.m_location = i18n.t('fieldRequired')
     }
-
     return errors;
   },
   handleSubmit: (values, bag) => {
@@ -777,7 +788,7 @@ const EnhancedNewRegistrationStep2 = withFormik({
       errors.brand = i18n.t('fieldRequired')
     } else if (values.brand.length >= 1000) {
       errors.brand = i18n.t('validation.maxCharacters')
-    }else if (languageCheck(values.brand) === false){
+    } else if (languageCheck(values.brand) === false) {
       errors.brand = i18n.t('validation.langError')
       // errors.brand = 'Not supported Lang'
     }
@@ -786,7 +797,7 @@ const EnhancedNewRegistrationStep2 = withFormik({
       errors.model_name = i18n.t('fieldRequired')
     } else if (values.model_name.length >= 1000) {
       errors.model_name = i18n.t('validation.maxCharacters')
-    }else if (languageCheck(values.model_name) === false){
+    } else if (languageCheck(values.model_name) === false) {
       errors.model_name = i18n.t('validation.langError')
     }
     if (!values.model_num) {
@@ -801,7 +812,7 @@ const EnhancedNewRegistrationStep2 = withFormik({
       errors.operating_system = i18n.t('fieldRequired')
     } else if (values.operating_system.length >= 1000) {
       errors.operating_system = i18n.t('validation.maxCharacters')
-    }else if (languageCheck(values.operating_system) === false){
+    } else if (languageCheck(values.operating_system) === false) {
       errors.operating_system = i18n.t('validation.langError')
     }
     if (!values.technologies || !values.technologies.length) {
@@ -846,7 +857,7 @@ function prepareAPIRequestStep2(values) {
 }
 
 const EnhancedNewRegistrationStep3 = withFormik({
-  mapPropsToValues: () => ({"step3": "", "documents": []}),
+  mapPropsToValues: () => ({ "step3": "", "documents": [] }),
 
   validate: values => {
     let errors = {};
@@ -921,18 +932,18 @@ class NewRegistationRequest extends Component {
   }
 
   redirectToNextStep(config) {
-    const {id} = this.props.match.params;
+    const { id } = this.props.match.params;
     if (id !== 'id') {
-      this.setState({stepReady: false});
+      this.setState({ stepReady: false });
       instance.get(`/registration/${id}`, config)
         .then(response => {
           if (response.data.status_label === 'New Request') {
-            this.setState({id: response.data.id, step: 2}, () => {
-              this.setState({stepReady: true});
+            this.setState({ id: response.data.id, step: 2 }, () => {
+              this.setState({ stepReady: true });
             });
           } else if (response.data.status_label === 'Awaiting Documents') {
-            this.setState({id: response.data.id, step: 3}, () => {
-              this.setState({stepReady: true});
+            this.setState({ id: response.data.id, step: 3 }, () => {
+              this.setState({ stepReady: true });
             });
           }
         })
@@ -940,40 +951,40 @@ class NewRegistationRequest extends Component {
       // Get Previous Steps Data
       this.updateTokenHOC(this.getPrevStepsDataFromServer, id);
     } else {
-      this.setState({stepReady: true});
+      this.setState({ stepReady: true });
     }
   }
 
   updateTokenHOC(callingFunc, values = null) {
-      let config = null;
-      if(this.props.kc.isTokenExpired(0)) {
-          this.props.kc.updateToken(0)
-              .success(() => {
-                  localStorage.setItem('token', this.props.kc.token)
-                  config = {
-                    headers: getAuthHeader(this.props.kc.token)
-                  }
-                  callingFunc(config, values);
-              })
-              .error(() => this.props.kc.logout());
-      } else {
+    let config = null;
+    if (this.props.kc.isTokenExpired(0)) {
+      this.props.kc.updateToken(0)
+        .success(() => {
+          localStorage.setItem('token', this.props.kc.token)
           config = {
-            headers: getAuthHeader()
+            headers: getAuthHeader(this.props.kc.token)
           }
           callingFunc(config, values);
+        })
+        .error(() => this.props.kc.logout());
+    } else {
+      config = {
+        headers: getAuthHeader()
       }
+      callingFunc(config, values);
+    }
   }
 
 
   togglePrevStepsModal() {
-    this.setState({prevStepsModal: !this.state.prevStepsModal});
+    this.setState({ prevStepsModal: !this.state.prevStepsModal });
   }
 
   getPrevStepsDataFromServer(config, id) {
     instance.get(`/registration/sections/${id}`, config)
       .then(response => {
-        if(response.status===200){
-          this.setState({prevStepsData: response.data});
+        if (response.status === 200) {
+          this.setState({ prevStepsData: response.data });
         }
       })
       .catch(error => {
@@ -983,14 +994,14 @@ class NewRegistationRequest extends Component {
 
   saveStep1(config, formdata) {
     // Call API and save information
-    this.setState({stepReady: false});
+    this.setState({ stepReady: false });
     instance.post(`/registration`, formdata, config)
       .then((response) => {
         if (response.data.id) {
         }
-        this.setState({id: response.data.id, step: 2}, () => {
+        this.setState({ id: response.data.id, step: 2 }, () => {
           this.updateTokenHOC(this.getPrevStepsDataFromServer, this.state.id);
-          this.setState({stepReady: true});
+          this.setState({ stepReady: true });
         });
       })
       .catch((error) => {
@@ -1003,35 +1014,52 @@ class NewRegistationRequest extends Component {
 
   saveStep2(config, formdata) {
     // Call API and save information
-    this.setState({stepReady: false});
-    const {id} = this.state;
+    this.setState({ stepReady: false });
+    const { id } = this.state;
     // Add Request ID to formData
     formdata.append('reg_id', id);
     instance.post(`/registration/device`, formdata, config)
       .then((response) => {
         if (response.data.id) {
           this.updateTokenHOC(this.getPrevStepsDataFromServer, id);
-          this.setState({stepReady: true});
+          this.setState({ stepReady: true });
+          if (IS_AUTOMATE[0]) {
+            // Finish the Registration WITHOUT 3RD STEP IF AUTOMATIC REGISTRATION IS TRUE
+            const statusDetails = {
+              id: id,
+              type: 'registration',
+              typeLabel: 'Registration',
+              icon: 'fa fa-check',
+              status: 'Pending Review',
+              action: 'Submitted'
+            }
+            this.props.history.push({
+              pathname: '/request-status',
+              state: { details: statusDetails }
+            });
+          }
+          else {
+            this.setState({ step: 3 });
+          }
         }
-        this.setState({step: 3});
-        this.setState({stepReady: true});
+        this.setState({ stepReady: true });
       })
       .catch((error) => {
-        this.setState({stepReady: true});
+        this.setState({ stepReady: true });
         errors(this, error);
       })
   }
 
   saveStep3(config, formdata) {
     // Call API and save information
-    this.setState({stepReady: false});
-    const {id} = this.state;
+    this.setState({ stepReady: false });
+    const { id } = this.state;
     formdata.append('reg_id', id);
     instance.post(`/registration/documents`, formdata, config)
       .then((response) => {
         if (response.data.length) {
           // Finish the Registration
-          this.setState({stepReady: true});
+          this.setState({ stepReady: true });
           const statusDetails = {
             id: id,
             type: 'registration',
@@ -1042,135 +1070,135 @@ class NewRegistationRequest extends Component {
           }
           this.props.history.push({
             pathname: '/request-status',
-            state: {details: statusDetails}
+            state: { details: statusDetails }
           });
         }
       })
       .catch((error) => {
-        this.setState({stepReady: true});
+        this.setState({ stepReady: true });
         errors(this, error);
       })
   }
 
   render() {
-    const {step, stepsInfo, id, prevStepsData, stepReady} = this.state;
+    const { step, stepsInfo, id, prevStepsData, stepReady } = this.state;
     return (
       <I18n ns="translations">
         {
-          (t, {i18n}) => (
+          (t, { i18n }) => (
             <div className="animated fadeIn">
               {(step === 1) &&
-              <EnhancedNewRegistrationStep1 callServer={(values) => this.updateTokenHOC(this.saveStep1, values)}
-                                            stepsInfo={stepsInfo}
-                                            stepReady={stepReady}
-                                            step={step}
-                                            kcProps={this.props}
-              />
+                <EnhancedNewRegistrationStep1 callServer={(values) => this.updateTokenHOC(this.saveStep1, values)}
+                  stepsInfo={stepsInfo}
+                  stepReady={stepReady}
+                  step={step}
+                  kcProps={this.props}
+                />
               }
               {(step === 2) &&
-              <EnhancedNewRegistrationStep2 callServer={(values) => this.updateTokenHOC(this.saveStep2, values)}
-                                            stepsInfo={stepsInfo} step={step}
-                                            stepReady={stepReady}
-                                            id={id} showPrevStepsData={this.togglePrevStepsModal}/>}
+                <EnhancedNewRegistrationStep2 callServer={(values) => this.updateTokenHOC(this.saveStep2, values)}
+                  stepsInfo={stepsInfo} step={step}
+                  stepReady={stepReady}
+                  id={id} showPrevStepsData={this.togglePrevStepsModal} />}
               {(step === 3) &&
-              <EnhancedNewRegistrationStep3 callServer={(values) => this.updateTokenHOC(this.saveStep3, values)}
-                                            stepsInfo={stepsInfo} step={step}
-                                            stepReady={stepReady}
-                                            id={id} showPrevStepsData={this.togglePrevStepsModal}/>}
+                <EnhancedNewRegistrationStep3 callServer={(values) => this.updateTokenHOC(this.saveStep3, values)}
+                  stepsInfo={stepsInfo} step={step}
+                  stepReady={stepReady}
+                  id={id} showPrevStepsData={this.togglePrevStepsModal} />}
               <RenderModal show={this.state.prevStepsModal} className="modal-lg">
                 <ModalHeader><b>{i18n.t('previousStep')}</b></ModalHeader>
                 <ModalBody>
                   {!isNil(prevStepsData) && !isEmpty(prevStepsData.reg_details) &&
-                  <div id="someId">
-                    <h6>{i18n.t('requestSteps.registration.basic')}</h6>
-                    <table className="table table-bordered">
-                      <tbody>
-                      <tr>
-                        <th>{i18n.t('deviceCount')}</th>
-                        <td>{prevStepsData.reg_details.device_count}</td>
-                      </tr>
-                      <tr>
-                        <th>{i18n.t('IMEIsPerDevice')}</th>
-                        <td>{prevStepsData.reg_details.imei_per_device}</td>
-                      </tr>
-                      {(prevStepsData.reg_details.file === null &&
-                      <tr>
-                        <th>IMEIs</th>
-                        <td>
-                          <table className="table table-mobile-primary table-webimeis table-striped table-sm mb-0">
-                            <tbody>
-                            {prevStepsData.reg_details.imeis.map((imeiList, index) => (
-                              <tr key={index}>
-                                <th>{i18n.t('device')} # {index + 1}</th>
-                                <td>
-                                  <table className="table table-sm mb-0">
-                                    <tbody>
-                                    <tr>
-                                      {imeiList.map((imei, i) => (
-                                        <td key={i}>{imei}</td>
-                                      ))}
-                                    </tr>
-                                    </tbody>
-                                  </table>
-                                </td>
-                              </tr>
-                            ))}
-                            </tbody>
-                          </table>
-                        </td>
-                      </tr>)
-                      ||
-                      <tr>
-                        <th>{i18n.t('file')}</th>
-                        <td>
-                          <button onClick={(e) => {
-                            downloadDocument(this.props,prevStepsData.reg_details.file_link, getExtension(prevStepsData.reg_details.file_link), removeExtension(prevStepsData.reg_details.file), e)
-                          }} value={prevStepsData.reg_details.file_link} className="btn-link">
-                           {i18n.t('download.document')}
-                          </button>
-                        </td>
-                      </tr>}
-                      <tr>
-                        <th>{i18n.t('manufacturingLocation')}</th>
-                        <td>{prevStepsData.reg_details.m_location}</td>
-                      </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                    <div id="someId">
+                      <h6>{i18n.t('requestSteps.registration.basic')}</h6>
+                      <table className="table table-bordered">
+                        <tbody>
+                          <tr>
+                            <th>{i18n.t('deviceCount')}</th>
+                            <td>{prevStepsData.reg_details.device_count}</td>
+                          </tr>
+                          <tr>
+                            <th>{i18n.t('IMEIsPerDevice')}</th>
+                            <td>{prevStepsData.reg_details.imei_per_device}</td>
+                          </tr>
+                          {(prevStepsData.reg_details.file === null &&
+                            <tr>
+                              <th>IMEIs</th>
+                              <td>
+                                <table className="table table-mobile-primary table-webimeis table-striped table-sm mb-0">
+                                  <tbody>
+                                    {prevStepsData.reg_details.imeis.map((imeiList, index) => (
+                                      <tr key={index}>
+                                        <th>{i18n.t('device')} # {index + 1}</th>
+                                        <td>
+                                          <table className="table table-sm mb-0">
+                                            <tbody>
+                                              <tr>
+                                                {imeiList.map((imei, i) => (
+                                                  <td key={i}>{imei}</td>
+                                                ))}
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </td>
+                            </tr>)
+                            ||
+                            <tr>
+                              <th>{i18n.t('file')}</th>
+                              <td>
+                                <button onClick={(e) => {
+                                  downloadDocument(this.props, prevStepsData.reg_details.file_link, getExtension(prevStepsData.reg_details.file_link), removeExtension(prevStepsData.reg_details.file), e)
+                                }} value={prevStepsData.reg_details.file_link} className="btn-link">
+                                  {i18n.t('download.document')}
+                                </button>
+                              </td>
+                            </tr>}
+                          <tr>
+                            <th>{i18n.t('manufacturingLocation')}</th>
+                            <td>{prevStepsData.reg_details.m_location}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   }
 
                   {!isNil(prevStepsData) && !isEmpty(prevStepsData.reg_device) &&
-                  <div className="mt-4">
-                    <h6>{i18n.t('requestSteps.registration.deviceModel')}</h6>
-                    <table className="table table-bordered">
-                      <tbody>
-                      <tr>
-                        <th>{i18n.t('brand')}</th>
-                        <td>{prevStepsData.reg_device.brand}</td>
-                      </tr>
-                      <tr>
-                        <th>{i18n.t('model')}</th>
-                        <td>{prevStepsData.reg_device.model_name}</td>
-                      </tr>
-                      <tr>
-                        <th>{i18n.t('modelnumber')}</th>
-                        <td>{prevStepsData.reg_device.model_num}</td>
-                      </tr>
-                      <tr>
-                        <th>{i18n.t('deviceType')}</th>
-                        <td>{prevStepsData.reg_device.device_type}</td>
-                      </tr>
-                      <tr>
-                        <th>{i18n.t('operatingSystem')}</th>
-                        <td>{prevStepsData.reg_device.operating_system}</td>
-                      </tr>
-                      <tr>
-                        <th>{i18n.t('technologies')}</th>
-                        <td>{prevStepsData.reg_device.technologies.join(', ')}</td>
-                      </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                    <div className="mt-4">
+                      <h6>{i18n.t('requestSteps.registration.deviceModel')}</h6>
+                      <table className="table table-bordered">
+                        <tbody>
+                          <tr>
+                            <th>{i18n.t('brand')}</th>
+                            <td>{prevStepsData.reg_device.brand}</td>
+                          </tr>
+                          <tr>
+                            <th>{i18n.t('model')}</th>
+                            <td>{prevStepsData.reg_device.model_name}</td>
+                          </tr>
+                          <tr>
+                            <th>{i18n.t('modelnumber')}</th>
+                            <td>{prevStepsData.reg_device.model_num}</td>
+                          </tr>
+                          <tr>
+                            <th>{i18n.t('deviceType')}</th>
+                            <td>{prevStepsData.reg_device.device_type}</td>
+                          </tr>
+                          <tr>
+                            <th>{i18n.t('operatingSystem')}</th>
+                            <td>{prevStepsData.reg_device.operating_system}</td>
+                          </tr>
+                          <tr>
+                            <th>{i18n.t('technologies')}</th>
+                            <td>{prevStepsData.reg_device.technologies.join(', ')}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   }
                 </ModalBody>
                 <ModalFooter>
