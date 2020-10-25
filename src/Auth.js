@@ -65,6 +65,7 @@ class Auth extends Component {
       realm:realm,
       clientId:clientId
     });
+
     keycloak.init({onLoad: 'login-required','checkLoginIframe' : false}).success(authenticated => {
       if(authenticated){
         this.setState({keycloak: keycloak, authenticated: authenticated})
