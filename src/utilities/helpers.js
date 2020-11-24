@@ -35,10 +35,14 @@ import {
   DE_DOCUMENTS,
   ENGLISH_REGEX,
   SPANISH_REGEX,
-  INDONESIAN_REGEX
+  INDONESIAN_REGEX,
+  REQUEST_STEPS,
+  IS_AUTOMATE,
+  VIEW_STEPS,
+  REVIEW_STEPS
 } from './constants';
 import FileSaver from "file-saver";
-import {lastIndexOf, take} from 'ramda'
+import { lastIndexOf, take } from 'ramda'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import i18n from './../i18n'
@@ -51,7 +55,7 @@ export const instance = axios.create({ // API Gateway
   baseURL: BASE_URL, // Dev API
 });
 
-export function fetchServerConfigData () {
+export function fetchServerConfigData() {
   const config = {
     headers: getAuthHeader()
   }
@@ -82,6 +86,21 @@ export function fetchServerConfigData () {
         data.documents.de_registration.map((doc) => (
           DE_DOCUMENTS.push(doc)
         ))
+      }
+      if (data.system_config) {
+        data.system_config.map((entry) => {
+          if (entry.label === "automate_imei_request") {
+            IS_AUTOMATE[0] = entry.flag;
+            if (entry.flag) {
+              REQUEST_STEPS.registration.pop();
+              REQUEST_STEPS.de_registration.pop();
+              VIEW_STEPS.stepInfo.pop();
+              VIEW_STEPS.deRegStepInfo.pop();
+              REVIEW_STEPS.registration.pop();
+              REVIEW_STEPS.de_registration.pop();
+            }
+          }
+        })
       }
     })
     .catch(error => {
@@ -126,7 +145,7 @@ export function getReviewStatus(status) {
   }
 }
 
-export function downloadSampleFile(kcProps,type, e) {
+export function downloadSampleFile(kcProps, type, e) {
   e.preventDefault()
   let config = null;
   if (kcProps.kc.isTokenExpired(0)) {
@@ -175,7 +194,7 @@ export function downloadSampleFile(kcProps,type, e) {
   }
 }
 
-export function downloadDocument(kcProps,link, fileType, fileName, event) {
+export function downloadDocument(kcProps, link, fileType, fileName, event) {
   event.preventDefault()
   let accessToken = '';
   if (kcProps.kc.isTokenExpired(0)) {
@@ -271,9 +290,9 @@ export function getStatusClass(status, sType = 'badge') {
   return statusClass;
 }
 
-export function getAuthHeader (token) {
+export function getAuthHeader(token) {
   let accessToken = localStorage.getItem('token');
-  if(token) {
+  if (token) {
     accessToken = token;
   }
   return {
@@ -299,12 +318,12 @@ export function range(start, limit, step) {
   return result;
 }
 
-export function getLangTag (lng){
+export function getLangTag(lng) {
   return lng.split('-')[0]
 }
 
 export function getUserInfo() {
-  if(!localStorage.getItem('userInfo')) {
+  if (!localStorage.getItem('userInfo')) {
     return {};
   }
   return JSON.parse(Base64.decode(localStorage.getItem('userInfo')))
@@ -362,7 +381,7 @@ export function isPage401(groups) {
   return pageStatus;
 }
 
-export function SweetAlert(params){
+export function SweetAlert(params) {
   let title = params.title
   let message = params.message
   let type = params.type
@@ -386,14 +405,14 @@ export function errors(context, error, noToastr = false) {
               SweetAlert({
                 title: i18n.t('error'),
                 message: k + ' ' + errors[key][0][k],
-                type:'error'
+                type: 'error'
               })
             }
           } else {
             SweetAlert({
               title: i18n.t('error'),
               message: errors[key][0],
-              type:'error'
+              type: 'error'
             })
           }
         }
@@ -401,7 +420,7 @@ export function errors(context, error, noToastr = false) {
         SweetAlert({
           title: i18n.t('error'),
           message: i18n.t('sessionExpired'),
-          type:'error'
+          type: 'error'
         })
         setTimeout(() => {
           window.location.reload();
@@ -410,38 +429,49 @@ export function errors(context, error, noToastr = false) {
         SweetAlert({
           title: i18n.t('error'),
           message: 'credentialMatch',
-          type:'error'
+          type: 'error'
         })
       } else if (error.response.status === 404) {
         SweetAlert({
           title: i18n.t('error'),
           message: error.response.data.message,
-          type:'error'
+          type: 'error'
         })
       } else if (error.response.status === 405) {
         SweetAlert({
           title: i18n.t('error'),
           message: i18n.t('wrongHttp'),
-          type:'error'
+          type: 'error'
         })
       } else if (error.response.status === 406) {
         SweetAlert({
           title: i18n.t('error'),
           message: error.response.data.message,
-          type:'error'
+          type: 'error'
         })
       } else if (error.response.status === 409) {
         SweetAlert({
           title: i18n.t('error'),
           message: error.response.data.message,
-          type:'error'
+          type: 'error'
         })
       } else if (error.response.status === 422 && !noToastr) {
-        SweetAlert({
-          title: i18n.t('error'),
-          message: i18n.t('unprocessibleEntity'),
-          type:'error'
-        })
+        let errorMessages = '';
+        let errorResponse = error.response.data.message
+        if (errorResponse) {
+          Object.keys(errorResponse).map((key, i) => {
+            Object.keys(errorResponse[key]).map((innerKey, j) => {
+              errorMessages += errorResponse[key][innerKey] + '<br/>'
+            })
+          })
+          MySwal.fire({
+            title: i18n.t('errorLog'),
+            html: `<div>${errorMessages}</div>`,
+            type: 'error',
+            customClass: 'swal-wide'
+          })
+        }
+
         let errors = error.response.data;
         for (let key in errors) {
           if (typeof errors[key][0] === 'object') {
@@ -452,7 +482,7 @@ export function errors(context, error, noToastr = false) {
             SweetAlert({
               title: i18n.t('error'),
               message: errors[key][0],
-              type:'error'
+              type: 'error'
             })
           }
         }
@@ -460,23 +490,32 @@ export function errors(context, error, noToastr = false) {
         SweetAlert({
           title: i18n.t('error'),
           message: i18n.t('serverNotResponding'),
-          type:'error'
+          type: 'error'
         })
       }
     } else {
       SweetAlert({
         title: i18n.t('error'),
         message: i18n.t('serverNotResponding'),
-        type:'error'
+        type: 'error'
       })
     }
   }
 }
 
+function IsJsonString(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 export function languageCheck(text) {
-  if(ENGLISH_REGEX.test(text) && defaultLanguage==="en"){
+  if (ENGLISH_REGEX.test(text) && defaultLanguage === "en") {
     return true;
-  }else if(SPANISH_REGEX.test(text) && defaultLanguage==="es"){
+  } else if (SPANISH_REGEX.test(text) && defaultLanguage === "es") {
     return true;
-  }else return INDONESIAN_REGEX.test(text) && defaultLanguage === "id";
+  } else return INDONESIAN_REGEX.test(text) && defaultLanguage === "id";
 }

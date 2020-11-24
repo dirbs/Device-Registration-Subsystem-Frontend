@@ -39,7 +39,7 @@ const CommentBox = (props) => {
               <li key={i}>
                 <div className="icell">
                   <div className="utitle">
-                    <p><b>{value.user_name}</b></p>
+                    <p><b>{value.sectionType ? value.sectionType.charAt(0).toUpperCase() + value.sectionType.slice(1).replaceAll('_', ' ') : value.user_name}</b></p>
                   </div>
                 </div>
                 <div className="icell">

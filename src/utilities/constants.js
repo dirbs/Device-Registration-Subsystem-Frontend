@@ -53,7 +53,8 @@ export const TECHNOLOGIES = []
 export const DOCUMENTS = []
 export const DE_DOCUMENTS = []
 export const EXTENSIONS = ['pdf', 'jpg', 'png', 'gif', 'bmp', 'tiff', 'svg'];
-export const STATUS_TYPES = []
+export const STATUS_TYPES = [];
+export const IS_AUTOMATE = [];
 
 export const REVIEW_STEPS = {
  registration: [
@@ -79,6 +80,18 @@ export const REQUEST_STEPS = {
   'requestSteps.de-registration.basic',
   'reviewRegistration.step5'
  ]
+}
+export const VIEW_STEPS = {
+  stepInfo: [
+    'requestSteps.registration.basic',
+    'requestSteps.registration.deviceModel',
+    'requestSteps.registration.approvalDocuments'
+  ],
+  deRegStepInfo: [
+    'requestSteps.de-registration.basic',
+    'requestSteps.de-registration.deviceModel',
+    'requestSteps.de-registration.approvalDocuments'
+  ]
 }
 
 export const Date_Format = 'YYYY-MM-DD';
