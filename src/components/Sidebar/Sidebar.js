@@ -105,7 +105,7 @@ class Sidebar extends Component {
       let links = '';
       switch (getUserRole(props.resources)) {
           case EXPORTER:
-            if(url === '/new-request/id' || url === '/association' ||  url === '/de-association') {
+            if(url === '/new-request/id' || url === '/association' ||  url === '/de-association' || url === '/search-logging') {
                 // Ignore this route for above group
             } else {
               links = <NavLink to={url} className={classes.link} activeClassName="active" onClick={this.hideMobile}>
@@ -115,7 +115,7 @@ class Sidebar extends Component {
           break;
 
           case BULK_IMPORTER:
-              if(url === '/de-registration/id' || url === '/association' ||  url === '/de-association') {
+              if(url === '/de-registration/id' || url === '/association' ||  url === '/de-association' || url === '/search-logging') {
                 // Ignore this route for above group
             } else {
               links = <NavLink to={url} className={classes.link} activeClassName="active" onClick={this.hideMobile}>
@@ -125,7 +125,7 @@ class Sidebar extends Component {
           break;
 
           case INDIVIDUAL_IMPORTER:
-            if(url === '/de-registration/id') {
+            if(url === '/de-registration/id' || url === '/search-logging') {
                 // Ignore this route for above group
             } else {
               links = <NavLink to={url} className={classes.link} activeClassName="active" onClick={this.hideMobile}>

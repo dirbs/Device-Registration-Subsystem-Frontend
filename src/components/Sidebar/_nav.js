@@ -45,6 +45,12 @@ export default {
         name: 'searchRequestLink',
         url: '/search-requests',
         icon: 'fa fa-search',
+    },
+    {
+        id: 8,
+        name: 'Search Logging',
+        url: '/search-logging',
+        icon: 'fa fa-history',
     }
   ]
 };
