@@ -50,6 +50,11 @@
   "errorLog": "Error Logs",
   "notRegisteredIMEIs": "Not registered IMEIs",
   "verify": "Verify",
+  "Description": "Description",
+  "Reviewer Comment": "Reviewer Comment",
+  "Reviewer": "Reviewer",
+  "Name": "Name",
+  "Section": "Section",
 
   "copyright": "Copyright",
   "allrights": "All rights reserved",
