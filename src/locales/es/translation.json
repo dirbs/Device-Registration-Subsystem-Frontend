@@ -50,6 +50,11 @@
   "errorLog": "Registros de errores",
   "notRegisteredIMEIs": "IMEIs no registrados",
   "verify": "Verificar",
+  "Description": "Descripción",
+  "Reviewer Comment": "Comentario del revisor",
+  "Reviewer": "Crítico",
+  "Name": "Nombre",
+  "Section": "Sección",
 
   "copyright": "Derechos de autor",
   "allrights": "Todos los derechos reservados",

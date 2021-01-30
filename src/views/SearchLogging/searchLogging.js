@@ -181,28 +181,26 @@ class searchLogging extends Component {
   }
 
   render() {
-    const { description, regId, isShow, dataTable,
-      reviewer_info = { comment: '', reviewer_id: '', reviewer_name: '', section: '', section_status: '' }} = this.state;
     return (
       <>
-        <MDBDataTable striped hover data={dataTable} />
-        <Modal isOpen={isShow} toggle={this.toggleModal}>
+        <MDBDataTable striped hover data={this.state.dataTable} />
+        <Modal isOpen={this.state.isShow} toggle={this.toggleModal}>
           <ModalHeader toggle={this.toggleModal}>Log Details</ModalHeader>
           <ModalBody>
-          <b>Description:</b> &nbsp;&nbsp;{this.state.modalData.description}
+          <b>{i18n.t('Description')}:</b> &nbsp;&nbsp;{this.state.modalData.description}
           <br/>
-          <b>Registration ID:</b> &nbsp;&nbsp;{this.state.modalData.reg_id}
+          <b>{i18n.t('Registration')} ID:</b> &nbsp;&nbsp;{this.state.modalData.reg_id}
           <br/>
           <hr/>
-          <b>Reviewer Comment:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.comment}
+          <b>{i18n.t('Reviewer Comment')}:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.comment}
           <br/>
-          <b>Reviewer ID:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.reviewer_id}
+          <b>{i18n.t('Reviewer')} ID:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.reviewer_id}
           <br/>
-          <b>Reviewer Name:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.reviewer_name}
+          <b>{i18n.t('Reviewer')} {i18n.t('Name')}:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.reviewer_name}
           <br/>
-          <b>Section:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.section}
+          <b>{i18n.t('Section')}:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.section}
           <br/>
-          <b>Section Status:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.section_status}
+          <b>{i18n.t('Section')} {i18n.t('Status')}:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.section_status}
           </ModalBody>
           <ModalFooter>
             <Button color="secondary" onClick={this.toggleModal}>
