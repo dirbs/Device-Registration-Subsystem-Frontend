@@ -24,107 +24,89 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import React, { Component } from "react";
 import { translate } from "react-i18next";
-import { Row, Col, Button, Form, Card, CardBody } from "reactstrap";
-import { withFormik, Field, FieldArray } from "formik";
 import {
-  getAuthHeader,
-} from "../../utilities/helpers";
+  Row,
+  Col,
+  Button,
+  Form,
+  Card,
+  CardBody,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "reactstrap";
+import { withFormik, Field, FieldArray } from "formik";
+import { getAuthHeader } from "../../utilities/helpers";
 import doubleEntryInput from "../../components/Form/DoubleEntryInput";
 import renderInput from "../../components/Form/RenderInput";
 import axios from "axios";
+import { MDBDataTable } from "mdbreact";
 
 import i18n from "i18next";
-
-class SearchRequest extends Component {
-  render() {
-    const {
-      isSubmitting,
-      handleSubmit,
-    } = this.props;
-    return (
-      <Form onSubmit={handleSubmit}>
-        <Row>
-          <Col xs={12} xl={8} className="order-xl-1 mt-3">
-            <Card>
-              <CardBody>
-                <Row>
-                  <Col xs={12} sm={6}>
-                    <Field
-                      name="brand"
-                      component={renderInput}
-                      label="Brand"
-                      type="text"
-                      placeholder="Brand"
-                      requiredStar
-                    />
-                  </Col>
-                  </Row>
-                  <Col xs={12} sm={6}>
-                  <Button
-                color="primary"
-                type="submit"
-                className="btn-next-prev"
-                disabled={isSubmitting}
-                role="button"
-              >
-                {i18n.t("submit")}
-              </Button>
-                  </Col>
-                
-              </CardBody>
-            </Card>
-            <div className="text-right">
-              
-            </div>
-          </Col>
-        </Row>
-      </Form>
-    );
-  }
-}
-
-const MyEnhancedForm = withFormik({
-  mapPropsToValues: () => ({
-    brand: "",
-  }),
-
-
-  validate: (values) => {
-    let errors = {};
-    if (!values.brand) {
-      errors.brand = i18n.t("validation.thisFieldIsRequired");
-    }
-    return errors;
-  },
-
-  handleSubmit: (values, bag) => {
-    bag.setSubmitting(false);
-    bag.props.callServer(prepareAPIRequest(values));
-  },
-
-  displayName: "SearchRequest", // helps with React DevTools
-})(SearchRequest);
-
-function prepareAPIRequest(values) {
-  // Validate Values before sending
-  const searchParams = {};
-
-  if (values.brand) {
-    searchParams.brand = values.brand;
-  }
-  return searchParams;
-}
 
 class searchLogging extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: null,
       loading: false,
       caseSubmitted: false,
+      columns: [
+        {
+          label: "User ID",
+          field: "user_id",
+          width: 150,
+          attributes: {
+            "aria-controls": "DataTable",
+            "aria-label": "ID",
+          },
+        },
+        {
+          label: "Username",
+          field: "user_name",
+          width: 270,
+        },
+        {
+          label: "Status",
+          field: "status",
+          width: 200,
+        },
+        {
+          label: "Method",
+          field: "method",
+          width: 100,
+        },
+        {
+          label: "Creation Date",
+          field: "created_at",
+          width: 150,
+        },
+        {
+          label: "Tracking ID",
+          field: "tracking_id",
+          width: 100,
+        },
+      ],
+      dataTable: {},
+      modalData: {
+        description: '',
+        reg_id: 0,
+        reviewer_info: {
+          comment: '',
+          reviewer_id: '',
+          reviewer_name: '',
+          section: '',
+          section_status: ''
+        }
+      },
+      isShow: false,
     };
     this.saveCase = this.saveCase.bind(this);
     this.updateTokenHOC = this.updateTokenHOC.bind(this);
+  }
+
+  componentDidMount() {
+    this.updateTokenHOC(this.saveCase);
   }
 
   updateTokenHOC(callingFunc, values = null) {
@@ -148,57 +130,87 @@ class searchLogging extends Component {
     }
   }
 
+  handleRowClick = (data) => {
+    console.log(data)
+    const { modalData } = this.state;
+    modalData.description = data.description;
+    modalData.reg_id = data.reg_id;
+    if(data.reviewer_info)
+    {
+      modalData.reviewer_info.comment = data.reviewer_info.comment;
+      modalData.reviewer_info.reviewer_id = data.reviewer_info.reviewer_id;
+      modalData.reviewer_info.reviewer_name = data.reviewer_info.reviewer_name;
+      modalData.reviewer_info.section = data.reviewer_info.comment;
+      modalData.reviewer_info.section_status = data.reviewer_info.section_status;
+    }
+    else {
+      modalData.reviewer_info.comment = '';
+      modalData.reviewer_info.reviewer_id = '';
+      modalData.reviewer_info.reviewer_name = '';
+      modalData.reviewer_info.section = '';
+      modalData.reviewer_info.section_status = '';
+    }
+    this.setState({modalData}, () => {
+      this.toggleModal();
+    })
+  };
+
   saveCase(config, values) {
     axios
-      .get(`http://192.168.100.82:9200/_search?q=${values.brand}`, config)
+      .get(
+        `http://192.168.100.82:9200/_search?pretty=true&q=*:*&size=10000`,
+        config
+      )
       .then((res) => {
-        this.setState({ data: res.data.hits });
+        let dataObject = {};
+        let rowArray = res.data.hits.hits.map((elem) => {
+          return {
+            clickEvent: () => this.handleRowClick(elem._source),
+            ...elem._source,
+          };
+        });
+        dataObject.columns = this.state.columns;
+        dataObject.rows = rowArray;
+        this.setState({ dataTable: dataObject });
       })
       .catch((err) => console.log(err));
   }
+
+  toggleModal = () => {
+    this.setState({isShow: !this.state.isShow})
+  }
+
   render() {
+    const { description, regId, isShow, dataTable,
+      reviewer_info = { comment: '', reviewer_id: '', reviewer_name: '', section: '', section_status: '' }} = this.state;
     return (
-      <div>
-        <MyEnhancedForm
-          callServer={(values) => this.updateTokenHOC(this.saveCase, values)}
-          caseSubmitted={this.state.caseSubmitted}
-        />
-        <Row>
-        {this.state.data !== null && 
-          <table className="table table-sm table-bordered table-hover mt-3 table-mobile-primary table-search">
-            <thead className="thead-light">
-              <tr>
-                <th>Register ID</th>
-                <th>Reguest Type</th>
-                <th>Username</th>
-                <th>Status</th>
-                <th>Method</th>
-                <th>Create Date</th>
-                <th>ID</th>
-                <th>User ID</th>
-                <th>Tracking ID</th>
-              </tr>
-            </thead>
-            <tbody>
-             {
-                  this.state.data.hits.map((item) => (
-                    <tr key={item._id}>
-                      <td>{item._source["reg_id"]}</td>
-                      <td>{item._source["user_name"]}</td>
-                      <td>{item._source["status"]}</td>
-                      <td>{item._source["request_type"]}</td>
-                      <td>{item._source["method"]}</td>
-                      <td>{item._source["created_at"]}</td>
-                      <td>{item._id}</td>
-                      <td>{item._source["user_id"]}</td>
-                      <td>{item._source["tracking_id"]}</td>
-                    </tr>
-                  ))}
-            </tbody>
-          </table>
-              }
-        </Row>
-      </div>
+      <>
+        <MDBDataTable striped hover data={dataTable} />
+        <Modal isOpen={isShow} toggle={this.toggleModal}>
+          <ModalHeader toggle={this.toggleModal}>Log Details</ModalHeader>
+          <ModalBody>
+          <b>Description:</b> &nbsp;&nbsp;{this.state.modalData.description}
+          <br/>
+          <b>Registration ID:</b> &nbsp;&nbsp;{this.state.modalData.reg_id}
+          <br/>
+          <hr/>
+          <b>Reviewer Comment:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.comment}
+          <br/>
+          <b>Reviewer ID:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.reviewer_id}
+          <br/>
+          <b>Reviewer Name:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.reviewer_name}
+          <br/>
+          <b>Section:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.section}
+          <br/>
+          <b>Section Status:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.section_status}
+          </ModalBody>
+          <ModalFooter>
+            <Button color="secondary" onClick={this.toggleModal}>
+              Close
+            </Button>
+          </ModalFooter>
+        </Modal>
+      </>
     );
   }
 }
