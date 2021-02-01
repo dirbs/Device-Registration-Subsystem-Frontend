@@ -48,7 +48,7 @@ export default {
     },
     {
         id: 8,
-        name: 'Search Logging',
+        name: 'SearchLogsLink',
         url: '/search-logging',
         icon: 'fa fa-history',
     }

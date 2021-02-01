@@ -2356,3 +2356,7 @@ button {
 		background-color: transparent;
 	}
 }
+
+tbody + thead{
+	display: none;
+  }

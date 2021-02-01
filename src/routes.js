@@ -39,6 +39,6 @@ const routes = {
   '/view-review/:id/:type': 'viewReviewLink',
   '/view-request/:id/:type': 'viewRequestLink',
   '/review-registration/:id/:type': 'reviewRequestLink',
-  '/search-logging': 'Search Logging'
+  '/search-logging': 'SearchLogsLink'
 };
 export default routes;
