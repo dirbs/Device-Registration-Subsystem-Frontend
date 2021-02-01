@@ -3,6 +3,7 @@
   "title": "Subsistema De Registro De Dispositivos",
   "mainNavigation": "Navegación Principal",
   "homeLink": "Casa",
+  "SearchLogsLink": "Registros de búsqueda",
   "dashboardLink": "Tablero",
   "newRequestLink": "Registro del dispositivo",
   "updateRegistration": "Actualizar registro",
@@ -55,6 +56,7 @@
   "Reviewer": "Crítico",
   "Name": "Nombre",
   "Section": "Sección",
+  "UpdatedAt": "Actualizado en",
 
   "copyright": "Derechos de autor",
   "allrights": "Todos los derechos reservados",

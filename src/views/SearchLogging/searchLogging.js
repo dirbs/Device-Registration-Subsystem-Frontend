@@ -53,7 +53,12 @@ class searchLogging extends Component {
       caseSubmitted: false,
       columns: [
         {
-          label: "User ID",
+          label: ['Registration Id ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
+          field: "reg_id",
+          width: 50,
+        },
+        {
+          label: ['User ID ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
           field: "user_id",
           width: 150,
           attributes: {
@@ -62,42 +67,42 @@ class searchLogging extends Component {
           },
         },
         {
-          label: "Username",
+          label: ['Username ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
           field: "user_name",
           width: 270,
         },
         {
-          label: "Status",
+          label: ['Status ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
           field: "status",
           width: 200,
         },
         {
-          label: "Method",
+          label: ['Method ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
           field: "method",
           width: 100,
         },
         {
-          label: "Creation Date",
+          label: ['Creation Date ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
           field: "created_at",
           width: 150,
         },
         {
-          label: "Tracking ID",
+          label: ['Tracking ID ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
           field: "tracking_id",
           width: 100,
         },
       ],
       dataTable: {},
       modalData: {
-        description: '',
-        reg_id: 0,
+        description: "",
+        updated_at: "",
         reviewer_info: {
-          comment: '',
-          reviewer_id: '',
-          reviewer_name: '',
-          section: '',
-          section_status: ''
-        }
+          comment: "",
+          reviewer_id: "",
+          reviewer_name: "",
+          section: "",
+          section_status: ""
+        },
       },
       isShow: false,
     };
@@ -131,28 +136,32 @@ class searchLogging extends Component {
   }
 
   handleRowClick = (data) => {
-    console.log(data)
+    console.log(data);
     const { modalData } = this.state;
     modalData.description = data.description;
-    modalData.reg_id = data.reg_id;
-    if(data.reviewer_info)
-    {
+    if (data.reviewer_info) {
       modalData.reviewer_info.comment = data.reviewer_info.comment;
       modalData.reviewer_info.reviewer_id = data.reviewer_info.reviewer_id;
       modalData.reviewer_info.reviewer_name = data.reviewer_info.reviewer_name;
       modalData.reviewer_info.section = data.reviewer_info.comment;
       modalData.reviewer_info.section_status = data.reviewer_info.section_status;
+      modalData.updated_at = data.updated_at;
+    } else {
+      modalData.reviewer_info.comment = "";
+      modalData.reviewer_info.reviewer_id = "";
+      modalData.reviewer_info.reviewer_name = "";
+      modalData.reviewer_info.section = "";
+      modalData.reviewer_info.section_status = "";
+      modalData.updated_at = "";
+    }    
+    if (data.updated_at) {
+      modalData.updated_at = data.updated_at;
+    } else {
+      modalData.updated_at = "";
     }
-    else {
-      modalData.reviewer_info.comment = '';
-      modalData.reviewer_info.reviewer_id = '';
-      modalData.reviewer_info.reviewer_name = '';
-      modalData.reviewer_info.section = '';
-      modalData.reviewer_info.section_status = '';
-    }
-    this.setState({modalData}, () => {
+    this.setState({ modalData }, () => {
       this.toggleModal();
-    })
+    });
   };
 
   saveCase(config, values) {
@@ -170,37 +179,73 @@ class searchLogging extends Component {
           };
         });
         dataObject.columns = this.state.columns;
-        dataObject.rows = rowArray;
+        dataObject.rows = rowArray.reverse();
         this.setState({ dataTable: dataObject });
       })
       .catch((err) => console.log(err));
   }
 
   toggleModal = () => {
-    this.setState({isShow: !this.state.isShow})
-  }
+    this.setState({ isShow: !this.state.isShow });
+  };
 
   render() {
     return (
       <>
-        <MDBDataTable striped hover data={this.state.dataTable} />
+        <MDBDataTable striped hover sortable entriesLabel='&nbsp;&nbsp;&nbsp;Show entries' data={this.state.dataTable} />
         <Modal isOpen={this.state.isShow} toggle={this.toggleModal}>
           <ModalHeader toggle={this.toggleModal}>Log Details</ModalHeader>
           <ModalBody>
-          <b>{i18n.t('Description')}:</b> &nbsp;&nbsp;{this.state.modalData.description}
-          <br/>
-          <b>{i18n.t('Registration')} ID:</b> &nbsp;&nbsp;{this.state.modalData.reg_id}
-          <br/>
-          <hr/>
-          <b>{i18n.t('Reviewer Comment')}:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.comment}
-          <br/>
-          <b>{i18n.t('Reviewer')} ID:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.reviewer_id}
-          <br/>
-          <b>{i18n.t('Reviewer')} {i18n.t('Name')}:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.reviewer_name}
-          <br/>
-          <b>{i18n.t('Section')}:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.section}
-          <br/>
-          <b>{i18n.t('Section')} {i18n.t('Status')}:</b> &nbsp;&nbsp;{this.state.modalData.reviewer_info.section_status}
+            <b>{i18n.t("Description")}:</b> &nbsp;&nbsp;
+            {this.state.modalData.description}
+            <br />
+            <hr />
+            {this.state.modalData.reviewer_info.comment && (
+              <>
+                <b>{i18n.t("Reviewer Comment")}:</b> &nbsp;&nbsp;
+                {this.state.modalData.reviewer_info.comment}
+                <br />{" "}
+              </>
+            )}
+            {this.state.modalData.reviewer_info.reviewer_id && (
+              <>
+                <b>{i18n.t("Reviewer")} ID:</b> &nbsp;&nbsp;
+                {this.state.modalData.reviewer_info.reviewer_id}
+                <br />
+              </>
+            )}
+            {this.state.modalData.reviewer_info.reviewer_name && (
+              <>
+                <b>
+                  {i18n.t("Reviewer")} {i18n.t("Name")}:
+                </b>{" "}
+                &nbsp;&nbsp;{this.state.modalData.reviewer_info.reviewer_name}
+                <br />
+              </>
+            )}
+            {this.state.modalData.reviewer_info.section && (
+              <>
+                <b>{i18n.t("Section")}:</b> &nbsp;&nbsp;
+                {this.state.modalData.reviewer_info.section}
+                <br />
+              </>
+            )}
+            {this.state.modalData.reviewer_info.section_status && (
+              <>
+                <b>
+                  {i18n.t("Section")} {i18n.t("Status")}:
+                </b>{" "}
+                &nbsp;&nbsp;{this.state.modalData.reviewer_info.section_status}
+              </>
+            )}
+            {this.state.modalData.updated_at && (
+              <>
+                <b>
+                {i18n.t("UpdatedAt")}:
+                </b>{" "}
+                &nbsp;&nbsp;{this.state.modalData.updated_at}
+              </>
+            )}
           </ModalBody>
           <ModalFooter>
             <Button color="secondary" onClick={this.toggleModal}>

@@ -3,6 +3,7 @@
   "title": "Subsistem Registrasi Perangkat",
   "mainNavigation": "Navigasi Utama",
   "homeLink": "Rumah",
+  "SearchLogsLink": "Search Logs",
   "dashboardLink": "Dasbor",
   "newRequestLink": "Registrasi perangkat",
   "updateRegistration": "Perbarui pendaftaran",
@@ -55,6 +56,7 @@
   "Reviewer": "Peninjau",
   "Name": "Nama",
   "Section": "Bagian",
+  "UpdatedAt": "Diperbarui pada",
 
   "copyright": "Hak cipta",
   "allrights": "Seluruh hak cipta",
