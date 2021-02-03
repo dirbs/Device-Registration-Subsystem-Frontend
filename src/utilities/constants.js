@@ -29,6 +29,7 @@ const {host: apiHost, port: apiPort, version: apiVersion, use: apiUse} = setting
 const {host: apimanHost, port: apimanPort, clientId: apimanClientId, use: apimanUse} = settings.apiman;
 const {appName} = settings.appDetails;
 const {host: kcHost, port:kcPort, version: kcVersion, use: kcUse} = settings.keycloak;
+const {host: elHost, port:elPort, use: elUse} = settings.elasticSearch;
 
 
 
@@ -44,6 +45,8 @@ if(apiUse) {
 } else if(apimanUse) {
  BASE_URL = `${apimanHost}${apimanPort ? ':'+ apimanPort: ''}${apimanClientId}`;
 }
+
+export let ELASTIC_SEARCH_URL = elHost + ':' + elPort;
 
 export const APP_NAME = appName;
 

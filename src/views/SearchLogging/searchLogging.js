@@ -24,26 +24,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import React, { Component } from "react";
 import { translate } from "react-i18next";
-import {
-  Row,
-  Col,
-  Button,
-  Form,
-  Card,
-  CardBody,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "reactstrap";
-import { withFormik, Field, FieldArray } from "formik";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { getAuthHeader } from "../../utilities/helpers";
-import doubleEntryInput from "../../components/Form/DoubleEntryInput";
-import renderInput from "../../components/Form/RenderInput";
 import axios from "axios";
 import { MDBDataTable } from "mdbreact";
-
-import i18n from "i18next";
+import { ELASTIC_SEARCH_URL } from "./../../utilities/constants";
 
 class searchLogging extends Component {
   constructor(props) {
@@ -53,12 +38,18 @@ class searchLogging extends Component {
       caseSubmitted: false,
       columns: [
         {
-          label: ['Registration Id ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
+          label: [
+            "Registration Id ",
+            <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i>,
+          ],
           field: "reg_id",
           width: 50,
         },
         {
-          label: ['User ID ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
+          label: [
+            "User ID ",
+            <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i>,
+          ],
           field: "user_id",
           width: 150,
           attributes: {
@@ -67,47 +58,54 @@ class searchLogging extends Component {
           },
         },
         {
-          label: ['Username ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
+          label: [
+            "Username ",
+            <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i>,
+          ],
           field: "user_name",
           width: 270,
         },
         {
-          label: ['Status ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
+          label: [
+            "Status ",
+            <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i>,
+          ],
           field: "status",
           width: 200,
         },
         {
-          label: ['Method ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
+          label: [
+            "Method ",
+            <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i>,
+          ],
           field: "method",
           width: 100,
         },
         {
-          label: ['Creation Date ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
+          label: [
+            "Creation Date ",
+            <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i>,
+          ],
           field: "created_at",
           width: 150,
         },
         {
-          label: ['Tracking ID ', <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i> ],
+          label: [
+            "Tracking ID ",
+            <i key="Lorem" className="fa fa-sort" aria-hidden="true"></i>,
+          ],
           field: "tracking_id",
           width: 100,
         },
       ],
       dataTable: {},
-      modalData: {
-        description: "",
-        updated_at: "",
-        reviewer_info: {
-          comment: "",
-          reviewer_id: "",
-          reviewer_name: "",
-          section: "",
-          section_status: ""
-        },
-      },
+      modalData: {},
+      modalNodes: [],
       isShow: false,
     };
     this.saveCase = this.saveCase.bind(this);
     this.updateTokenHOC = this.updateTokenHOC.bind(this);
+    this.jsonIterate = this.jsonIterate.bind(this);
   }
 
   componentDidMount() {
@@ -136,40 +134,16 @@ class searchLogging extends Component {
   }
 
   handleRowClick = (data) => {
-    console.log(data);
-    const { modalData } = this.state;
-    modalData.description = data.description;
-    if (data.reviewer_info) {
-      modalData.reviewer_info.comment = data.reviewer_info.comment;
-      modalData.reviewer_info.reviewer_id = data.reviewer_info.reviewer_id;
-      modalData.reviewer_info.reviewer_name = data.reviewer_info.reviewer_name;
-      modalData.reviewer_info.section = data.reviewer_info.comment;
-      modalData.reviewer_info.section_status = data.reviewer_info.section_status;
-      modalData.updated_at = data.updated_at;
-    } else {
-      modalData.reviewer_info.comment = "";
-      modalData.reviewer_info.reviewer_id = "";
-      modalData.reviewer_info.reviewer_name = "";
-      modalData.reviewer_info.section = "";
-      modalData.reviewer_info.section_status = "";
-      modalData.updated_at = "";
-    }    
-    if (data.updated_at) {
-      modalData.updated_at = data.updated_at;
-    } else {
-      modalData.updated_at = "";
-    }
-    this.setState({ modalData }, () => {
+    this.setState({ modalData: data }, () => {
+      this.setState({ modalNodes: this.jsonIterate() });
+
       this.toggleModal();
     });
   };
 
   saveCase(config, values) {
     axios
-      .get(
-        `http://192.168.100.82:9200/_search?pretty=true&q=*:*&size=10000`,
-        config
-      )
+      .get(`${ELASTIC_SEARCH_URL}/_search?pretty=true&q=*:*&size=10000`, config)
       .then((res) => {
         let dataObject = {};
         let rowArray = res.data.hits.hits.map((elem) => {
@@ -189,62 +163,77 @@ class searchLogging extends Component {
     this.setState({ isShow: !this.state.isShow });
   };
 
+  generateKey = (pre) => {
+    return `${pre}_${new Date().getTime()}`;
+  };
+
+  jsonIterate() {
+    const { modalData } = this.state;
+    let mainArray = [];
+    iter(modalData);
+    function iter(o) {
+      if (typeof o === "object") {
+        Object.keys(o).forEach(function (k, i) {
+          if (o[k] !== null && typeof o[k] === "object") {
+            iter(o[k]);
+            return;
+          }
+          if (o[k] !== null && typeof o[k] === "array") {
+            iter(o[k]);
+            return;
+          }
+          if (
+            o[k] !== undefined &&
+            (typeof o[k] === "string" || typeof o[k] === "number")
+          ) {
+            mainArray.push({ name: k, value: o[k] });
+          }
+        });
+      } else if (typeof o === "array") {
+        o.forEach(function (elem, k) {
+          if (elem[k] !== null && typeof elem[k] === "array") {
+            iter(elem[k]);
+            return;
+          }
+          if (
+            elem[k] !== undefined &&
+            (typeof elem[k] === "string" || typeof elem[k] === "number")
+          ) {
+            mainArray.push({ name: "arrayElem", value: elem[k] });
+          }
+        });
+      }
+    }
+    return mainArray;
+  }
+
   render() {
     return (
       <>
-        <MDBDataTable striped hover sortable entriesLabel='&nbsp;&nbsp;&nbsp;Show entries' data={this.state.dataTable} />
+        <MDBDataTable
+          striped
+          hover
+          sortable
+          entriesLabel="&nbsp;&nbsp;&nbsp;Show entries"
+          data={this.state.dataTable}
+        />
         <Modal isOpen={this.state.isShow} toggle={this.toggleModal}>
           <ModalHeader toggle={this.toggleModal}>Log Details</ModalHeader>
           <ModalBody>
-            <b>{i18n.t("Description")}:</b> &nbsp;&nbsp;
-            {this.state.modalData.description}
-            <br />
-            <hr />
-            {this.state.modalData.reviewer_info.comment && (
-              <>
-                <b>{i18n.t("Reviewer Comment")}:</b> &nbsp;&nbsp;
-                {this.state.modalData.reviewer_info.comment}
-                <br />{" "}
-              </>
-            )}
-            {this.state.modalData.reviewer_info.reviewer_id && (
-              <>
-                <b>{i18n.t("Reviewer")} ID:</b> &nbsp;&nbsp;
-                {this.state.modalData.reviewer_info.reviewer_id}
-                <br />
-              </>
-            )}
-            {this.state.modalData.reviewer_info.reviewer_name && (
-              <>
-                <b>
-                  {i18n.t("Reviewer")} {i18n.t("Name")}:
-                </b>{" "}
-                &nbsp;&nbsp;{this.state.modalData.reviewer_info.reviewer_name}
-                <br />
-              </>
-            )}
-            {this.state.modalData.reviewer_info.section && (
-              <>
-                <b>{i18n.t("Section")}:</b> &nbsp;&nbsp;
-                {this.state.modalData.reviewer_info.section}
-                <br />
-              </>
-            )}
-            {this.state.modalData.reviewer_info.section_status && (
-              <>
-                <b>
-                  {i18n.t("Section")} {i18n.t("Status")}:
-                </b>{" "}
-                &nbsp;&nbsp;{this.state.modalData.reviewer_info.section_status}
-              </>
-            )}
-            {this.state.modalData.updated_at && (
-              <>
-                <b>
-                {i18n.t("UpdatedAt")}:
-                </b>{" "}
-                &nbsp;&nbsp;{this.state.modalData.updated_at}
-              </>
+            {this.state.modalNodes.map((elem) =>
+              isNaN(Number(elem.name)) ? (
+                <>
+                  <b>{elem.name}:</b> &nbsp;&nbsp;
+                  <span className="float-right">{elem.value}</span>
+                  <hr/>
+                </>
+              ) : (
+                <>
+                  <b>{elem.name === '0' ? 'IMEIs: ' : ''}</b> &nbsp;&nbsp;
+                  <span className="float-right">{elem.value}</span>
+                  <hr/>
+                </>
+              )
             )}
           </ModalBody>
           <ModalFooter>
