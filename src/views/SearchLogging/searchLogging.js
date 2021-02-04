@@ -1,5 +1,3 @@
-
-
 /*
 Copyright (c) 2018-2019 Qualcomm Technologies, Inc.
 All rights reserved.
@@ -31,8 +29,6 @@ import { getAuthHeader } from "../../utilities/helpers";
 import axios from "axios";
 import { MDBDataTable } from "mdbreact";
 import { ELASTIC_SEARCH_URL } from "./../../utilities/constants";
-import i18n from "i18next";
-import ReactJson from 'react-json-view'
 
 class searchLogging extends Component {
   constructor(props) {
@@ -103,21 +99,13 @@ class searchLogging extends Component {
         },
       ],
       dataTable: {},
-      modalData: {
-        description: "",
-        updated_at: "",
-        reviewer_info: {
-          comment: "",
-          reviewer_id: "",
-          reviewer_name: "",
-          section: "",
-          section_status: "",
-        },
-      },
+      modalData: {},
+      modalNodes: [],
       isShow: false,
     };
     this.saveCase = this.saveCase.bind(this);
     this.updateTokenHOC = this.updateTokenHOC.bind(this);
+    this.jsonIterate = this.jsonIterate.bind(this);
   }
 
   componentDidMount() {
@@ -146,31 +134,9 @@ class searchLogging extends Component {
   }
 
   handleRowClick = (data) => {
-    console.log(data);
-    const { modalData } = this.state;
-    modalData.description = data.description;
-    if (data.reviewer_info) {
-      modalData.reviewer_info.comment = data.reviewer_info.comment;
-      modalData.reviewer_info.reviewer_id = data.reviewer_info.reviewer_id;
-      modalData.reviewer_info.reviewer_name = data.reviewer_info.reviewer_name;
-      modalData.reviewer_info.section = data.reviewer_info.comment;
-      modalData.reviewer_info.section_status =
-        data.reviewer_info.section_status;
-      modalData.updated_at = data.updated_at;
-    } else {
-      modalData.reviewer_info.comment = "";
-      modalData.reviewer_info.reviewer_id = "";
-      modalData.reviewer_info.reviewer_name = "";
-      modalData.reviewer_info.section = "";
-      modalData.reviewer_info.section_status = "";
-      modalData.updated_at = "";
-    }
-    if (data.updated_at) {
-      modalData.updated_at = data.updated_at;
-    } else {
-      modalData.updated_at = "";
-    }
-    this.setState({ modalData }, () => {
+    this.setState({ modalData: data }, () => {
+      this.setState({ modalNodes: this.jsonIterate() });
+
       this.toggleModal();
     });
   };
@@ -197,6 +163,50 @@ class searchLogging extends Component {
     this.setState({ isShow: !this.state.isShow });
   };
 
+  generateKey = (pre) => {
+    return `${pre}_${new Date().getTime()}`;
+  };
+
+  jsonIterate() {
+    const { modalData } = this.state;
+    let mainArray = [];
+    iter(modalData);
+    function iter(o) {
+      if (typeof o === "object") {
+        Object.keys(o).forEach(function (k, i) {
+          if (o[k] !== null && typeof o[k] === "object") {
+            iter(o[k]);
+            return;
+          }
+          if (o[k] !== null && typeof o[k] === "array") {
+            iter(o[k]);
+            return;
+          }
+          if (
+            o[k] !== undefined &&
+            (typeof o[k] === "string" || typeof o[k] === "number")
+          ) {
+            mainArray.push({ name: k, value: o[k] });
+          }
+        });
+      } else if (typeof o === "array") {
+        o.forEach(function (elem, k) {
+          if (elem[k] !== null && typeof elem[k] === "array") {
+            iter(elem[k]);
+            return;
+          }
+          if (
+            elem[k] !== undefined &&
+            (typeof elem[k] === "string" || typeof elem[k] === "number")
+          ) {
+            mainArray.push({ name: "arrayElem", value: elem[k] });
+          }
+        });
+      }
+    }
+    return mainArray;
+  }
+
   render() {
     return (
       <>
@@ -210,56 +220,21 @@ class searchLogging extends Component {
         <Modal isOpen={this.state.isShow} toggle={this.toggleModal}>
           <ModalHeader toggle={this.toggleModal}>Log Details</ModalHeader>
           <ModalBody>
-          <ReactJson src={this.state.modalData} name={false} enableClipboard={false} displayObjectSize={false} displayDataTypes={false} quotesOnKeys={false}  />
-            {/* <b>{i18n.t("Description")}:</b> &nbsp;&nbsp;
-            {this.state.modalData.description}
-            <br />
-            <hr />
-            {this.state.modalData.reviewer_info.comment && (
-              <>
-                <b>{i18n.t("Reviewer Comment")}:</b> &nbsp;&nbsp;
-                {this.state.modalData.reviewer_info.comment}
-                <br />{" "}
-              </>
+            {this.state.modalNodes.map((elem) =>
+              isNaN(Number(elem.name)) ? (
+                <>
+                  <b>{elem.name}:</b> &nbsp;&nbsp;
+                  <span className="float-right">{elem.value}</span>
+                  <hr/>
+                </>
+              ) : (
+                <>
+                  <b>{elem.name === '0' ? 'IMEIs: ' : ''}</b> &nbsp;&nbsp;
+                  <span className="float-right">{elem.value}</span>
+                  <hr/>
+                </>
+              )
             )}
-            {this.state.modalData.reviewer_info.reviewer_id && (
-              <>
-                <b>{i18n.t("Reviewer")} ID:</b> &nbsp;&nbsp;
-                {this.state.modalData.reviewer_info.reviewer_id}
-                <br />
-              </>
-            )}
-            {this.state.modalData.reviewer_info.reviewer_name && (
-              <>
-                <b>
-                  {i18n.t("Reviewer")} {i18n.t("Name")}:
-                </b>{" "}
-                &nbsp;&nbsp;{this.state.modalData.reviewer_info.reviewer_name}
-                <br />
-              </>
-            )}
-            {this.state.modalData.reviewer_info.section && (
-              <>
-                <b>{i18n.t("Section")}:</b> &nbsp;&nbsp;
-                {this.state.modalData.reviewer_info.section}
-                <br />
-              </>
-            )}
-            {this.state.modalData.reviewer_info.section_status && (
-              <>
-                <b>
-                  {i18n.t("Section")} {i18n.t("Status")}:
-                </b>{" "}
-                &nbsp;&nbsp;{this.state.modalData.reviewer_info.section_status}
-              </>
-            )}
-            {this.state.modalData.updated_at && (
-              <>
-                <b>{i18n.t("UpdatedAt")}:</b> &nbsp;&nbsp;
-                {this.state.modalData.updated_at}
-              </>
-            )} */}
-
           </ModalBody>
           <ModalFooter>
             <Button color="secondary" onClick={this.toggleModal}>
@@ -273,5 +248,3 @@ class searchLogging extends Component {
 }
 
 export default translate("translations")(searchLogging);
-
-
