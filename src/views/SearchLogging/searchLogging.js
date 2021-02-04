@@ -207,6 +207,10 @@ class searchLogging extends Component {
     return mainArray;
   }
 
+  improveKeys = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).replace('_', ' ');
+  }
+
   render() {
     return (
       <>
@@ -217,21 +221,21 @@ class searchLogging extends Component {
           entriesLabel="&nbsp;&nbsp;&nbsp;Show entries"
           data={this.state.dataTable}
         />
-        <Modal isOpen={this.state.isShow} toggle={this.toggleModal}>
+        <Modal size="lg" isOpen={this.state.isShow} toggle={this.toggleModal}>
           <ModalHeader toggle={this.toggleModal}>Log Details</ModalHeader>
           <ModalBody>
             {this.state.modalNodes.map((elem) =>
               isNaN(Number(elem.name)) ? (
                 <>
-                  <b>{elem.name}:</b> &nbsp;&nbsp;
+                <hr className="customHr"/>
+                  <b>{this.improveKeys(elem.name)}:</b> &nbsp;&nbsp;
                   <span className="float-right">{elem.value}</span>
-                  <hr/>
+                  
                 </>
               ) : (
                 <>
-                  <b>{elem.name === '0' ? 'IMEIs: ' : ''}</b> &nbsp;&nbsp;
-                  <span className="float-right">{elem.value}</span>
-                  <hr/>
+                  
+                  {elem.name === '0' ? <span><hr className="customHr"/><b>IMEIs: </b>&nbsp;&nbsp;{elem.value}</span> : <span>, {elem.value}</span>} 
                 </>
               )
             )}
