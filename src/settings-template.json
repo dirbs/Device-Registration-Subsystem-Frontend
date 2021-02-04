@@ -17,6 +17,10 @@
     "clientId": "/apiman-gateway/DIRBS/drs/1.0",
     "use": true
   },
+  "elasticSearch": {
+    "host": "http:// SERVER_IP",
+    "port": "PORT_NUMBER"
+  },
   "keycloak": {
     "host": "http://SERVER_IP",
     "port": "PORT_NUMBER",
