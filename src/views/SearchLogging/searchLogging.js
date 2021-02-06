@@ -170,15 +170,15 @@ class searchLogging extends Component {
   jsonIterate() {
     const { modalData } = this.state;
     let mainArray = [];
+    let isFirstIMEI = true;
     iter(modalData);
     function iter(o) {
       if (typeof o === "object") {
         Object.keys(o).forEach(function (k, i) {
-          if (o[k] !== null && typeof o[k] === "object") {
-            iter(o[k]);
-            return;
-          }
-          if (o[k] !== null && typeof o[k] === "array") {
+          if (
+            o[k] !== null &&
+            (typeof o[k] === "object" || typeof o[k] === "array")
+          ) {
             iter(o[k]);
             return;
           }
@@ -186,7 +186,16 @@ class searchLogging extends Component {
             o[k] !== undefined &&
             (typeof o[k] === "string" || typeof o[k] === "number")
           ) {
-            mainArray.push({ name: k, value: o[k] });
+            if (isNaN(Number(k))) {
+              mainArray.push({ name: k, value: o[k] });
+            } else {
+              if (k === "0" && isFirstIMEI) {
+                isFirstIMEI = false;
+                mainArray.push({ name: k, value: o[k] });
+              } else {
+                mainArray.push({ name: k + "1", value: o[k] });
+              }
+            }
           }
         });
       } else if (typeof o === "array") {
@@ -208,8 +217,8 @@ class searchLogging extends Component {
   }
 
   improveKeys = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1).replace('_', ' ');
-  }
+    return string.charAt(0).toUpperCase() + string.slice(1).replace("_", " ");
+  };
 
   render() {
     return (
@@ -227,15 +236,22 @@ class searchLogging extends Component {
             {this.state.modalNodes.map((elem) =>
               isNaN(Number(elem.name)) ? (
                 <>
-                <hr className="customHr"/>
-                  <b>{this.improveKeys(elem.name)}:</b> &nbsp;&nbsp;
-                  <span className="float-right">{elem.value}</span>
-                  
+                  <hr className="customHr" />
+                  <article className="log-row">
+                    <strong>{this.improveKeys(elem.name)}:</strong>
+                    <p>{elem.value}</p>
+                  </article>
                 </>
               ) : (
                 <>
-                  
-                  {elem.name === '0' ? <span><hr className="customHr"/><b>IMEIs: </b>&nbsp;&nbsp;{elem.value}</span> : <span>, {elem.value}</span>} 
+                  {elem.name === "0" ? (
+                    <span>
+                      <hr className="customHr" />
+                      <b>IMEIs: </b>&nbsp;&nbsp;{elem.value}
+                    </span>
+                  ) : (
+                    <span>, {elem.value}</span>
+                  )}
                 </>
               )
             )}
