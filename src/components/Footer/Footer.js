@@ -30,8 +30,8 @@ class Footer extends Component {
   render() {
     return (
       <footer className="app-footer">
-        <div>&copy; {i18n.t('copyright')} 2018-2020 DIRBS. {i18n.t('allrights')}.</div>
-        <div><b>{i18n.t('version')}: </b>3.0.0</div>
+        <div>&copy; {i18n.t('copyright')} 2018-2021 DIRBS. {i18n.t('allrights')}.</div>
+        <div><b>{i18n.t('version')}: </b>4.0.0</div>
       </footer>
     )
   }

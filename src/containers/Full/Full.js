@@ -45,6 +45,7 @@ import ViewReview from "../../views/Requests/Review/View/ViewReview";
 import ViewRequest from "../../views/Requests/View/ViewRequest";
 import Deassociation from "../../views/Association/Deassociation";
 import Association from "../../views/Association/Association";
+import SearchLogging from "../../views/SearchLogging/searchLogging";
 
 import Page401 from '../../views/Errors/Page401';
 import { I18n, translate } from 'react-i18next';
@@ -158,6 +159,10 @@ class Full extends Component {
                         {(getUserRole(this.props.resources) === INDIVIDUAL_IMPORTER) &&
                         <Route path="/de-association" name="Deassociation" key={Date.now()}
                                render={(props) => <Deassociation {...this.props} {...props}/>}/>
+                        }
+                        {(getUserRole(this.props.resources) === AUTHORITY) &&
+                        <Route path="/search-logging" name="SearchLogging"
+                               render={(props) => <SearchLogging {...this.props} {...props}/>}/>
                         }
                         <Route path="/unauthorized-access" name="Page401" component={Page401}/>
                         <Redirect from="/" to="/dashboard"/>

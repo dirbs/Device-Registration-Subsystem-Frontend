@@ -38,6 +38,7 @@ const routes = {
   '/update-deregistration/:id': 'updateDeregistration',
   '/view-review/:id/:type': 'viewReviewLink',
   '/view-request/:id/:type': 'viewRequestLink',
-  '/review-registration/:id/:type': 'reviewRequestLink'
+  '/review-registration/:id/:type': 'reviewRequestLink',
+  '/search-logging': 'SearchLogsLink'
 };
 export default routes;
